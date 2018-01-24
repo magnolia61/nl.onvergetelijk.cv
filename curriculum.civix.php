@@ -6,23 +6,26 @@
  * (Delegated) Implementation of hook_civicrm_config
  */
 function _curriculum_civix_civicrm_config(&$config = NULL) {
-  static $configured = FALSE;
-  if ($configured) return;
-  $configured = TRUE;
+	static $configured = FALSE;
+	if ($configured) {
+		return;
+	}
 
-  $template =& CRM_Core_Smarty::singleton();
+	$configured = TRUE;
 
-  $extRoot = dirname( __FILE__ ) . DIRECTORY_SEPARATOR;
-  $extDir = $extRoot . 'templates';
+	$template = &CRM_Core_Smarty::singleton();
 
-  if ( is_array( $template->template_dir ) ) {
-      array_unshift( $template->template_dir, $extDir );
-  } else {
-      $template->template_dir = array( $extDir, $template->template_dir );
-  }
+	$extRoot = dirname(__FILE__) . DIRECTORY_SEPARATOR;
+	$extDir = $extRoot . 'templates';
 
-  $include_path = $extRoot . PATH_SEPARATOR . get_include_path( );
-  set_include_path( $include_path );
+	if (is_array($template->template_dir)) {
+		array_unshift($template->template_dir, $extDir);
+	} else {
+		$template->template_dir = array($extDir, $template->template_dir);
+	}
+
+	$include_path = $extRoot . PATH_SEPARATOR . get_include_path();
+	set_include_path($include_path);
 }
 
 /**
@@ -31,53 +34,53 @@ function _curriculum_civix_civicrm_config(&$config = NULL) {
  * @param $files array(string)
  */
 function _curriculum_civix_civicrm_xmlMenu(&$files) {
-  foreach (_curriculum_civix_glob(__DIR__ . '/xml/Menu/*.xml') as $file) {
-    $files[] = $file;
-  }
+	foreach (_curriculum_civix_glob(__DIR__ . '/xml/Menu/*.xml') as $file) {
+		$files[] = $file;
+	}
 }
 
 /**
  * Implementation of hook_civicrm_install
  */
 function _curriculum_civix_civicrm_install() {
-  _curriculum_civix_civicrm_config();
-  if ($upgrader = _curriculum_civix_upgrader()) {
-    return $upgrader->onInstall();
-  }
+	_curriculum_civix_civicrm_config();
+	if ($upgrader = _curriculum_civix_upgrader()) {
+		return $upgrader->onInstall();
+	}
 }
 
 /**
  * Implementation of hook_civicrm_uninstall
  */
 function _curriculum_civix_civicrm_uninstall() {
-  _curriculum_civix_civicrm_config();
-  if ($upgrader = _curriculum_civix_upgrader()) {
-    return $upgrader->onUninstall();
-  }
+	_curriculum_civix_civicrm_config();
+	if ($upgrader = _curriculum_civix_upgrader()) {
+		return $upgrader->onUninstall();
+	}
 }
 
 /**
  * (Delegated) Implementation of hook_civicrm_enable
  */
 function _curriculum_civix_civicrm_enable() {
-  _curriculum_civix_civicrm_config();
-  if ($upgrader = _curriculum_civix_upgrader()) {
-    if (is_callable(array($upgrader, 'onEnable'))) {
-      return $upgrader->onEnable();
-    }
-  }
+	_curriculum_civix_civicrm_config();
+	if ($upgrader = _curriculum_civix_upgrader()) {
+		if (is_callable(array($upgrader, 'onEnable'))) {
+			return $upgrader->onEnable();
+		}
+	}
 }
 
 /**
  * (Delegated) Implementation of hook_civicrm_disable
  */
 function _curriculum_civix_civicrm_disable() {
-  _curriculum_civix_civicrm_config();
-  if ($upgrader = _curriculum_civix_upgrader()) {
-    if (is_callable(array($upgrader, 'onDisable'))) {
-      return $upgrader->onDisable();
-    }
-  }
+	_curriculum_civix_civicrm_config();
+	if ($upgrader = _curriculum_civix_upgrader()) {
+		if (is_callable(array($upgrader, 'onDisable'))) {
+			return $upgrader->onDisable();
+		}
+	}
 }
 
 /**
@@ -90,13 +93,13 @@ function _curriculum_civix_civicrm_disable() {
  *                for 'enqueue', returns void
  */
 function _curriculum_civix_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
-  if ($upgrader = _curriculum_civix_upgrader()) {
-    return $upgrader->onUpgrade($op, $queue);
-  }
+	if ($upgrader = _curriculum_civix_upgrader()) {
+		return $upgrader->onUpgrade($op, $queue);
+	}
 }
 
 function _curriculum_civix_upgrader() {
-  return NULL;	//	no upgrader for custom extensions
+	return NULL; //	no upgrader for custom extensions
 }
 
 /**
@@ -110,31 +113,31 @@ function _curriculum_civix_upgrader() {
  * @return array(string)
  */
 function _curriculum_civix_find_files($dir, $pattern) {
-  if (is_callable(array('CRM_Utils_File', 'findFiles'))) {
-    return CRM_Utils_File::findFiles($dir, $pattern);
-  }
+	if (is_callable(array('CRM_Utils_File', 'findFiles'))) {
+		return CRM_Utils_File::findFiles($dir, $pattern);
+	}
 
-  $todos = array($dir);
-  $result = array();
-  while (!empty($todos)) {
-    $subdir = array_shift($todos);
-    foreach (_curriculum_civix_glob("$subdir/$pattern") as $match) {
-      if (!is_dir($match)) {
-        $result[] = $match;
-      }
-    }
-    if ($dh = opendir($subdir)) {
-      while (FALSE !== ($entry = readdir($dh))) {
-        $path = $subdir . DIRECTORY_SEPARATOR . $entry;
-        if ($entry{0} == '.') {
-        } elseif (is_dir($path)) {
-          $todos[] = $path;
-        }
-      }
-      closedir($dh);
-    }
-  }
-  return $result;
+	$todos = array($dir);
+	$result = array();
+	while (!empty($todos)) {
+		$subdir = array_shift($todos);
+		foreach (_curriculum_civix_glob("$subdir/$pattern") as $match) {
+			if (!is_dir($match)) {
+				$result[] = $match;
+			}
+		}
+		if ($dh = opendir($subdir)) {
+			while (FALSE !== ($entry = readdir($dh))) {
+				$path = $subdir . DIRECTORY_SEPARATOR . $entry;
+				if ($entry{0} == '.') {
+				} elseif (is_dir($path)) {
+					$todos[] = $path;
+				}
+			}
+			closedir($dh);
+		}
+	}
+	return $result;
 }
 /**
  * (Delegated) Implementation of hook_civicrm_managed
@@ -142,16 +145,16 @@ function _curriculum_civix_find_files($dir, $pattern) {
  * Find any *.mgd.php files, merge their content, and return.
  */
 function _curriculum_civix_civicrm_managed(&$entities) {
-  $mgdFiles = _curriculum_civix_find_files(__DIR__, '*.mgd.php');
-  foreach ($mgdFiles as $file) {
-    $es = include $file;
-    foreach ($es as $e) {
-      if (empty($e['module'])) {
-        $e['module'] = 'nl.onvergetelijk.cv';
-      }
-      $entities[] = $e;
-    }
-  }
+	$mgdFiles = _curriculum_civix_find_files(__DIR__, '*.mgd.php');
+	foreach ($mgdFiles as $file) {
+		$es = include $file;
+		foreach ($es as $e) {
+			if (empty($e['module'])) {
+				$e['module'] = 'nl.onvergetelijk.cv';
+			}
+			$entities[] = $e;
+		}
+	}
 }
 
 /**
@@ -167,8 +170,8 @@ function _curriculum_civix_civicrm_managed(&$entities) {
  * @return array, possibly empty
  */
 function _curriculum_civix_glob($pattern) {
-  $result = glob($pattern);
-  return is_array($result) ? $result : array();
+	$result = glob($pattern);
+	return is_array($result) ? $result : array();
 }
 
 /**
@@ -180,32 +183,38 @@ function _curriculum_civix_glob($pattern) {
  * $parentId - used internally to recurse in the menu structure
  */
 function _curriculum_civix_insert_navigation_menu(&$menu, $path, $item, $parentId = NULL) {
-  static $navId;
+	static $navId;
 
-  // If we are done going down the path, insert menu
-  if (empty($path)) {
-    if (!$navId) $navId = CRM_Core_DAO::singleValueQuery("SELECT max(id) FROM civicrm_navigation");
-    $navId ++;
-    $menu[$navId] = array (
-      'attributes' => array_merge($item, array(
-        'label'      => CRM_Utils_Array::value('name', $item),
-        'active'     => 1,
-        'parentID'   => $parentId,
-        'navID'      => $navId,
-      ))
-    );
-    return true;
-  } else {
-    // Find an recurse into the next level down
-    $found = false;
-    $path = explode('/', $path);
-    $first = array_shift($path);
-    foreach ($menu as $key => &$entry) {
-      if ($entry['attributes']['name'] == $first) {
-        if (!$entry['child']) $entry['child'] = array();
-        $found = _curriculum_civix_insert_navigation_menu($entry['child'], implode('/', $path), $item, $key);
-      }
-    }
-    return $found;
-  }
+	// If we are done going down the path, insert menu
+	if (empty($path)) {
+		if (!$navId) {
+			$navId = CRM_Core_DAO::singleValueQuery("SELECT max(id) FROM civicrm_navigation");
+		}
+
+		$navId++;
+		$menu[$navId] = array(
+			'attributes' => array_merge($item, array(
+				'label' => CRM_Utils_Array::value('name', $item),
+				'active' => 1,
+				'parentID' => $parentId,
+				'navID' => $navId,
+			)),
+		);
+		return true;
+	} else {
+		// Find an recurse into the next level down
+		$found = false;
+		$path = explode('/', $path);
+		$first = array_shift($path);
+		foreach ($menu as $key => &$entry) {
+			if ($entry['attributes']['name'] == $first) {
+				if (!$entry['child']) {
+					$entry['child'] = array();
+				}
+
+				$found = _curriculum_civix_insert_navigation_menu($entry['child'], implode('/', $path), $item, $key);
+			}
+		}
+		return $found;
+	}
 }
