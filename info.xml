@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<extension key="nl.onvergetelijk.cv" type="module">
+  <file>curriculum</file>
+  <name>Onvergetelijke Zomerkampen - CV</name>
+  <description>Deze extensie berekent het aantal jaar dat iemand mee is geweest als leiding of deelnemer</description>
+  <license>GNU AGPL</license>
+  <maintainer>
+    <author>Richard van Oosterhout</author>
+    <email>info@onvergetelijk.nl</email>
+  </maintainer>
+  <releaseDate>2016-01-01</releaseDate>
+  <version>0.1</version>
+  <develStage>beta</develStage>
+  <compatibility>
+    <ver>4.7</ver>
+  </compatibility>
+  <comments>This module extension is to Stichting Onvergetelijke Zomerkampen</comments>
+</extension>
