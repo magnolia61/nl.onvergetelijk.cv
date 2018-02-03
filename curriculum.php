@@ -30,10 +30,10 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
 		#watchdog('php', '<pre>dao11:'. print_r($dao11, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG);
 
 		while ($dao11->fetch()) {
-			$welkkamp = $dao11->welkkamp;
+			$welkkamp    = $dao11->welkkamp;
 			$kampfunctie = $dao11->kampfunctie;
-			$contactid = $dao11->contactid;
-			$eventid = $dao11->eventid;
+			$contactid   = $dao11->contactid;
+			$eventid     = $dao11->eventid;
 		}
 
 		$sql13 = "SELECT start_date AS eventstart FROM civicrm_event WHERE id = '$eventid'";
@@ -45,10 +45,10 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
 			$eventstart = $dao13->eventstart;
 		}
 
-		$date1 = date_create($eventstart);
-		$date2 = date_create();
-		$diff = date_diff($date1, $date2);
-		$diffyears = $diff->y;
+		$date1      = date_create($eventstart);
+		$date2      = date_create();
+		$diff       = date_diff($date1, $date2);
+		$diffyears  = $diff->y;
 		$diffmonths = $diff->m;
 
 		watchdog('php', '<pre>kamp:' . print_r($welkkamp, true) . '</pre>', null, WATCHDOG_DEBUG);
@@ -73,8 +73,8 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
 		// watchdog('php', '<pre>'. print_r($dao1, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG);
 
 		// UPDATE the Deelnemer CV according to the tags and only if Deelnemer CV is empty or null
-		$sql3 = "SELECT TG.description FROM civicrm_entity_tag ET INNER JOIN civicrm_tag TG ON ET.tag_id = TG.id WHERE ET.entity_id = $entityID AND TG.name LIKE 'D%' ORDER BY TG.description ASC";
-		$dao3 = CRM_Core_DAO::executeQuery($sql3);
+		$sql3           = "SELECT TG.description FROM civicrm_entity_tag ET INNER JOIN civicrm_tag TG ON ET.tag_id = TG.id WHERE ET.entity_id = $entityID AND TG.name LIKE 'D%' ORDER BY TG.description ASC";
+		$dao3           = CRM_Core_DAO::executeQuery($sql3);
 		$welkejarendeel = array();
 		while ($dao3->fetch()) {
 			$welkejarendeel[] = $dao3->description;
@@ -82,9 +82,9 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
 		}
 		$tgdeel = count(array_filter($welkejarendeel));
 		$cvdeel = implode('', $welkejarendeel);
-		$sql4 = "UPDATE $tableName1 SET welke_jaren_mee_als_deelnemer__376 = '$cvdeel' WHERE entity_id = '$entityID' AND welke_jaren_mee_als_deelnemer__376 = ''";
+		$sql4   = "UPDATE $tableName1 SET welke_jaren_mee_als_deelnemer__376 = '$cvdeel' WHERE entity_id = '$entityID' AND welke_jaren_mee_als_deelnemer__376 = ''";
 		#$sql4     = "UPDATE $tableName1 SET welke_jaren_mee_als_deelnemer__376 = '$cvdeel' WHERE entity_id = '$entityID'";
-		$dao4 = CRM_Core_DAO::executeQuery($sql4);
+		$dao4  = CRM_Core_DAO::executeQuery($sql4);
 		$sql14 = "UPDATE $tableName1 SET tagcv_deel_856 = '$cvdeel' WHERE entity_id = '$entityID'";
 		$dao14 = CRM_Core_DAO::executeQuery($sql14);
 		$sql24 = "UPDATE $tableName1 SET tagtotaal_deel_848 = '$tgdeel' WHERE entity_id = $entityID";
@@ -97,8 +97,8 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
 		#watchdog('php', '<pre>cvdeel:'. print_r($cvleid, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG);
 
 		// UPDATE the Leiding CV according to the tags and only if Leiding CV is empty or null
-		$sql5 = "SELECT TG.description FROM civicrm_entity_tag ET INNER JOIN civicrm_tag TG ON ET.tag_id = TG.id WHERE ET.entity_id = '$entityID' AND TG.name LIKE 'L%' ORDER BY TG.description ASC";
-		$dao5 = CRM_Core_DAO::executeQuery($sql5);
+		$sql5           = "SELECT TG.description FROM civicrm_entity_tag ET INNER JOIN civicrm_tag TG ON ET.tag_id = TG.id WHERE ET.entity_id = '$entityID' AND TG.name LIKE 'L%' ORDER BY TG.description ASC";
+		$dao5           = CRM_Core_DAO::executeQuery($sql5);
 		$welkejarenleid = array();
 		while ($dao5->fetch()) {
 			$welkejarenleid[] = $dao5->description;
@@ -106,9 +106,9 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
 		}
 		$tgleid = count(array_filter($welkejarenleid));
 		$cvleid = implode('', $welkejarenleid);
-		$sql6 = "UPDATE $tableName1 SET welke_jaren_ben_je_als_leiding_m_73 = '$cvleid' WHERE entity_id = '$entityID' AND welke_jaren_ben_je_als_leiding_m_73 = ''";
+		$sql6   = "UPDATE $tableName1 SET welke_jaren_ben_je_als_leiding_m_73 = '$cvleid' WHERE entity_id = '$entityID' AND welke_jaren_ben_je_als_leiding_m_73 = ''";
 		#$sql6     = "UPDATE $tableName1 SET welke_jaren_ben_je_als_leiding_m_73 = '$cvleid' WHERE entity_id = '$entityID'";
-		$dao6 = CRM_Core_DAO::executeQuery($sql6);
+		$dao6  = CRM_Core_DAO::executeQuery($sql6);
 		$sql16 = "UPDATE $tableName1 SET tagcv_leid_857 = '$cvleid' WHERE entity_id = '$entityID'";
 		$dao16 = CRM_Core_DAO::executeQuery($sql16);
 		$sql26 = "UPDATE $tableName1 SET tagtotaal_leid_849 = '$tgleid' WHERE entity_id = $entityID";
@@ -124,25 +124,25 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
 		$dao1 = CRM_Core_DAO::executeQuery($sql1, CRM_Core_DAO::$_nullArray);
 		while ($dao1->fetch()) {
 			//    loop through each Curriculum record, calculating the HoeVaakLeiding in jaren
-			$id = $dao1->id;
-			$arraydeel = explode("", $dao1->welke_jaren_mee_als_deelnemer__376);
-			$arrayleid = explode("", $dao1->welke_jaren_ben_je_als_leiding_m_73);
+			$id          = $dao1->id;
+			$arraydeel   = explode("", $dao1->welke_jaren_mee_als_deelnemer__376);
+			$arrayleid   = explode("", $dao1->welke_jaren_ben_je_als_leiding_m_73);
 			$hoevaakdeel = count(array_filter($arraydeel));
 			$hoevaakleid = count(array_filter($arrayleid));
-			$totaalmee = $hoevaakdeel + $hoevaakleid;
-			$eerstedeel = 0;
+			$totaalmee   = $hoevaakdeel + $hoevaakleid;
+			$eerstedeel  = 0;
 			$laatstedeel = 0;
-			if (!empty($arraydeel)) {
-				$eerstedeel = min(array_filter($arraydeel));
+			if ($hoevaakdeel > 0) {
+				$eerstedeel  = min(array_filter($arraydeel));
 				$laatstedeel = max(array_filter($arraydeel));
 			}
-			$eersteleid = 0;
+			$eersteleid  = 0;
 			$laatsteleid = 0;
-			if (!empty($arrayleid)) {
-				$eersteleid = min(array_filter($arrayleid));
+			if ($hoevaakleid > 0) {
+				$eersteleid  = min(array_filter($arrayleid));
 				$laatsteleid = max(array_filter($arrayleid));
 			}
-			$eerstekeer = $hoevaakdeel > 0 ? $eerstedeel : $eersteleid;
+			$eerstekeer  = $hoevaakdeel > 0 ? $eerstedeel : $eersteleid;
 			$laatstekeer = $hoevaakleid > 0 ? $laatsteleid : $laatstedeel;
 
 			#$welkejarendeelmin    = min(array_filter($welkejarendeel));
@@ -163,8 +163,8 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
 			#watchdog('php', '<pre>'. print_r($sql2, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG);
 			$tagverschildeel = $tgdeel - $hoevaakdeel;
 			$tagverschilleid = $tgleid - $hoevaakleid;
-			$sql12 = "UPDATE $tableName1 SET tagverschil_deel_850 = '$tagverschildeel', tagverschil_leid_851 = '$tagverschilleid' WHERE id = '$id' AND entity_id = '$entityID'";
-			$dao12 = CRM_Core_DAO::executeQuery($sql12);
+			$sql12           = "UPDATE $tableName1 SET tagverschil_deel_850 = '$tagverschildeel', tagverschil_leid_851 = '$tagverschilleid' WHERE id = '$id' AND entity_id = '$entityID'";
+			$dao12           = CRM_Core_DAO::executeQuery($sql12);
 			#watchdog('php', '<pre>tagverschildeel:'. print_r($tagverschildeel, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG);
 			#watchdog('php', '<pre>tagverschilleid:'. print_r($tagverschilleid, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG);
 		}
