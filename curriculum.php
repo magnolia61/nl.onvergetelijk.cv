@@ -21,7 +21,7 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
 	}
 
 	$tableName1 = "civicrm_value_curriculum_103"; //  table name for the custom group (each set of custom fields has a corresponding table in the database)
-	$tableName2 = "civicrm_value_leid_part_125"; //  table name for the custom group (each set of custom fields has a corresponding table in the database)
+	$tableName2 = "civicrm_value_part_leid_190"; //  table name for the custom group (each set of custom fields has a corresponding table in the database)
 
 	if ($groupID == 125) {
 		$sql11 = "SELECT lp.welk_kamp_567 AS welkkamp, lp.functie_568 AS kampfunctie, pt.contact_id AS contactid, pt.event_id AS eventid FROM $tableName2 AS lp INNER JOIN `civicrm_participant` AS pt ON lp.entity_id = pt.id WHERE lp.entity_id = '$entityID'";
