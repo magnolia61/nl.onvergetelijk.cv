@@ -6,6 +6,25 @@ ini_set('display_startup_errors', true);
 
 require_once 'curriculum.civix.php';
 
+function curriculum_civicrm_validateprofile($profileName)
+{
+    $processkampleeftijd = 0;
+    if ($profileName === 'Verjaardag_en_geslacht_68' or
+        $profileName === 'Verjaardag_en_geslacht_97' or
+        $profileName === 'Verjaardag_en_geslacht_19'
+    ) {
+        watchdog('php', '<pre>---STARTKAMPLEEFTIJD---</pre>', null, WATCHDOG_DEBUG);
+        $processkampleeftijd = 1;
+        watchdog('php', '<pre>validateprofile: profile_name:' . print_r($profileName, true) . '</pre>', null, WATCHDOG_DEBUG);
+        watchdog('php', '<pre>set_processkampleeftijd:' . print_r($processkampleeftijd, true) . '</pre>', null, WATCHDOG_DEBUG);
+        #watchdog('php', '<pre>gid:' . print_r($gid, true) . '</pre>', null, WATCHDOG_DEBUG);
+        #watchdog('php', '<pre>id:' . print_r($id, true) . '</pre>', null, WATCHDOG_DEBUG);
+        #watchdog('php', '<pre>group_id:' . print_r($groupID, true) . '</pre>', null, WATCHDOG_DEBUG);
+        #watchdog('php', '<pre>entityid:' . print_r($entityID, true) . '</pre>', null, WATCHDOG_DEBUG);
+        watchdog('php', '<pre>---ENDKAMPLEEFTIJD---</pre>', null, WATCHDOG_DEBUG);
+    }
+}
+
 /**
  * Implementation of hook_civicrm_custom
  *
@@ -31,8 +50,9 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
 	$exttag		= 0;
 	$extvog		= 1;
 
-	//if (!in_array($groupID, array("103", "139", "190", "181"))) {
+	//if (!in_array($groupID, array("101", "103", "139", "190", "181"))) {
 	if (!in_array($groupID, array("139","190"))) { // ALLEEN PART PROFILES
+		// 101  EVENT KENMERKEN
 		// 103	TAB  CURRICULUM
 		// 139	PART DEEL
 		// 190	PART LEID
@@ -42,12 +62,101 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
 		return; //   if not, get out of here
 	}
 
+	if (in_array($groupID, array("101"))) {
+		if ($extdebug == 1) { watchdog('php', '<pre>*** START EXTENSION EVENT KENMERKEN [groupID: '.$groupID.'] [op: '.$op.'] ***</pre>', null, WATCHDOG_DEBUG); }
+		if ($extdebug == 1) { watchdog('php', '<pre>entityID:' . print_r($entityID, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+
+		#$event_plekken_jongens = NULL:
+		#$event_plekken_meisjes = NULL:
+
+    	$result = civicrm_api3('Event', 'get', array(
+      		'sequential' => 1,
+      		'return' => array("event_type_id", "custom_658", "custom_657", "has_waitlist", "waitlist_text", "event_full_text", "max_participants", "custom_516"),
+      		'id' => $entityID,
+    	));
+
+		#if ($extdebug == 1) { watchdog('php', '<pre>geteventinfo_result:' . print_r($result, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+
+    	#$event_type_id			= $result['values'][0]['event_type_id'];
+    	$event_plekken_jongens	= $result['values'][0]['custom_658'];
+    	$event_plekken_meisjes	= $result['values'][0]['custom_657'];
+    	$event_haswaitlist		= $result['values'][0]['has_waitlist'];
+    	$event_waitlisttext		= $result['values'][0]['waitlist_text'];
+   	    $event_fulltext			= $result['values'][0]['full_text'];
+    	$event_max_participants = $result['values'][0]['max_participants'];
+    	$event_lastminute		= $result['values'][0]['custom_516'];
+
+   	    if ($extdebug == 1) { watchdog('php', '<pre>event_plekken_jongens:' . print_r($event_plekken_jongens, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+    	if ($extdebug == 1) { watchdog('php', '<pre>event_plekken_meisjes:' . print_r($event_plekken_meisjes, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+    	#if ($extdebug == 1) { watchdog('php', '<pre>event_haswaitlist:' . print_r($event_haswaitlist, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+    	#if ($extdebug == 1) { watchdog('php', '<pre>event_waitlisttext:' . print_r($event_waitlisttext, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+    	#if ($extdebug == 1) { watchdog('php', '<pre>event_fulltext:' . print_r($event_fulltext, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+    	#if ($extdebug == 1) { watchdog('php', '<pre>event_max_participants:' . print_r($event_max_participants, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+    	#if ($extdebug == 1) { watchdog('php', '<pre>event_lastminute:' . print_r($event_lastminute, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+
+    	$event_waitlist_beiden	= "Dit kamp is op dit moment zo goed als vol. Per deelnemer moeten we bekijken of er nog plek is. Dit heeft met de indeling van de groepjes en de slaapzalen te maken. U kunt uw kind aanmelden voor de wachtlijst. We zullen u vervolgens op de hoogte stellen of, en zo ja, wanneer de aanmelding alsnog doorgang kan vinden.";
+    	$event_waitlist_jongens	= "LET OP: Voor dit kamp is op dit moment alleen nog plek voor meisjes. Jongens komen op de wachtlijst. Meisjes komen trouwens eerst ook op de wachtlijst maar we sturen u vrij snel na de aanmelding een linkje om de aanmelding van uw dochter alsnog af te kunnen ronden.";
+    	$event_waitlist_meisjes	= "LET OP: Voor dit kamp is op dit moment alleen nog plek voor jongens. Meisjes komen op de wachtlijst. Jongens komen trouwens eerst ook op de wachtlijst maar we sturen u vrij snel na de aanmelding een linkje om de aanmelding van uw zoon alsnog af te kunnen ronden.";
+    	$event_waitlist_naarjk	= "Hierboven ziet u wat de beschikbaarheid is voor jongens en voor meisjes. Op dit moment komt iedereen sowieso eerst op de wachtlijst. Voor wie er toch plek is sturen we een email om de aanmelding af te ronden. Jongens en meiden die rond december 16 worden zijn van harte welkom om mee te gaan met het Jeugdkamp in plaats van het Tienerkamp.";
+
+    	$event_fulltext 		= "Helaas zijn er voor dit kamp geen plekken meer beschikbaar. De aanmeldingen voor 2019 gaan op 1 januari weer open. We verwijzen u voor deze zomer graag naar onze collega kamporganisaties zoals o.a. Kaleb, YoY kampen, Camps4kids, Oase kampen, Wegwijzerkampen en Geloofshelden.";
+
+    	$params_event = array(
+    		#'event_type_id'		=> $event_type_id,
+   			'id' 				=> $entityID,
+      		'has_waitlist' 		=> 1, // default: wachtlijst is aan (indien aanmeldingen > max_participants)
+      		'max_participants'	=> 1,
+      		'waitlist_text' 	=> $event_waitlist_beiden,
+      		'event_full_text'	=> $event_fulltext,
+      		#'custom_516'		=> 0,
+    	);
+
+    	// WACHTLIJST VOOR JONGENS & PLEK VOOR MEISJES
+    	if (in_array($event_plekken_jongens, array(":-|"), true)) {
+    		$params_event['has_waitlist'] 		= 0;
+     		$params_event['max_participants'] 	= 1;
+    		$params_event['waitlist_text']		= $event_waitlist_jongens;
+    		#$params_event['custom_516'] 		= 1; // op de lastminutelijst?
+    	}
+    	// WACHTLIJST VOOR MEISJES & PLEK VOOR JONGENS
+    	if (in_array($event_plekken_meisjes, array(":-|"), true)) {
+    		$params_event['has_waitlist'] 		= 0;
+     		$params_event['max_participants'] 	= 1;
+    		$params_event['waitlist_text']		= $event_waitlist_meisjes;
+    		#$params_event['custom_516'] 		= 1; // op de lastminutelijst?
+    	}
+    	// WACHTLIJST VOOR JONGENS & MEISJES
+    	if (in_array($event_plekken_jongens, array(":-|"), true) 		AND in_array($event_plekken_meisjes, array(":-|"), true)) {
+    		$params_event['has_waitlist'] 		= 0;
+     		$params_event['max_participants'] 	= 1;
+    		$params_event['waitlist_text']		= $event_waitlist_beiden;
+    		#$params_event['custom_516'] 		= 0; // op de lastminutelijst?
+    	}
+    	// PLEK VOOR JONGENS & MEISJES
+    	if (in_array($event_plekken_meisjes, array(";-)",":-)"), true) 	AND in_array($event_plekken_jongens, array(";-)",":-)"), true)) {
+    		$params_event['has_waitlist'] 		= 0;
+    		$params_event['max_participants'] 	= 200;
+    		#$params_event['custom_516']		= 1; // op de lastminutelijst?
+    	}
+    	// VOL VOOR JONGENS & MEISJES
+    	if (in_array($event_plekken_jongens, array(":-("), true) 		AND in_array($event_plekken_meisjes, array(":-("), true)) {
+    		$params_event['has_waitlist'] 		= 0;
+     		$params_event['max_participants'] 	= 1;
+    		#$params_event['custom_516'] 		= 0; // op de lastminutelijst?
+    	}
+
+		if ($extdebug == 1) { watchdog('php', '<pre>params_event:' . print_r($params_event, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+		$result = civicrm_api3('Event', 'create', $params_event);
+		if ($extdebug == 1) { watchdog('php', '<pre>*** END EXTENSION EVENT KENMERKEN [groupID: '.$groupID.'] [op: '.$op.'] ***</pre>', null, WATCHDOG_DEBUG); }
+		return; //   if not, get out of here
+	}
+
 	if (in_array($groupID, array("103", "139", "190", "181"))) {
 
     	if ($extdebug == 1) { watchdog('php', '<pre>*** START EXTENSION CV [groupID: '.$groupID.'] [op: '.$op.'] ***</pre>', null, WATCHDOG_DEBUG); }
 
 		if ($op != 'create' && $op != 'edit') { //    did we just create or edit a custom object?
-    		if ($extdebug == 1) { watchdog('php', '<pre>EXIT: op = create OR op is not edit</pre>', NULL, WATCHDOG_DEBUG); }
+    		if ($extdebug == 1) { watchdog('php', '<pre>EXIT: op != create OR op != edit</pre>', NULL, WATCHDOG_DEBUG); }
 			return; //    if not, get out of here
 		}
     	$diffyears		= 0;
@@ -88,7 +197,7 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
   			$fiscalyear_start = date("$fiscalYearStart[d]-$fiscalYearStart[M]-Y", strtotime("-1 year"));
   			#if ($extdebug == 1) { watchdog('php', '<pre>fiscalyear_start -1:' . print_r($fiscalyear_start, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
   		}
-		$grensvognoggoed = date("$fiscalYearStart[d]-$fiscalYearStart[M]-Y", strtotime("-2 year")); // VOG noggoed als datum binnen priveous 2 fiscal year valt
+		$grensvognoggoed = date("$fiscalYearStart[d]-$fiscalYearStart[M]-Y", strtotime("-3 year")); // VOG noggoed als datum binnen priveous 2 fiscal year valt
   		#if ($extdebug == 1) { watchdog('php', '<pre>fiscalyear_end 0:' . print_r($fiscalyear_end, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
 		if (strtotime($fiscalyear_end)   < strtotime($todaydatetime)) {
   			$fiscalyear_end   = date($fiscalyear_end, strtotime("+1 year"));
@@ -185,6 +294,9 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
 		if ($extdebug == 1) { watchdog('php', '<pre>datum_drijf_ingevuld:'. print_r($datum_drijf_ingevuld, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
 		if ($extdebug == 1) { watchdog('php', '<pre>datum_drijf_gechecked:'. print_r($datum_drijf_gechecked, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
 
+		if ($extdebug == 1) { watchdog('php', '<pre>part_vogingediend:'. print_r($part_vogingediend, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
+		if ($extdebug == 1) { watchdog('php', '<pre>part_vogontvangst:'. print_r($part_vogontvangst, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
+
 		#if ($extdebug == 1) { watchdog('php', '<pre>displayname:'. print_r($displayname, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
 		#if ($extdebug == 1) { watchdog('php', '<pre>first_name:' . print_r($first_name, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
    		#if ($extdebug == 1) { watchdog('php', '<pre>part_eventid:' . print_r($part_eventid, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
@@ -219,10 +331,6 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
 	}
 	if (in_array($groupID, array("103", "181"))) {	// TAB CURICULUM + TAB INTAKE
 		$entity_id = $entityID;
-	}
-	if (in_array($groupID, array("139", "190"))) { 	// PART DEEL + PART LEID + PART LEID VOG
-		#if ($extdebug == 1) { watchdog('php', '<pre>kamp:' . print_r($part_welkkamp, true) . '</pre>', null, WATCHDOG_DEBUG); }
-		#if ($extdebug == 1) { watchdog('php', '<pre>functie:' . print_r($part_functie, true) . '</pre>', null, WATCHDOG_DEBUG); }
 	}
 	if (in_array($groupID, array("103", "139", "190", "181"))) {
 		if ($extdebug == 1) { watchdog('php', '<pre>contact_id:' . print_r($contact_id, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
@@ -542,25 +650,20 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
 			}
    		}
    		if ($extdebug == 1) { watchdog('php', '<pre>*** END EXTENSION CV [groupID: '.$groupID.'] [op: '.$op.'] ***</pre>', null, WATCHDOG_DEBUG); }
-			// ************************************************************************************************************
-			// EXTENTION VOG
-			// ************************************************************************************************************
+		// ************************************************************************************************************
+		// EXTENTION VOG
+		// ************************************************************************************************************
    		if ($extvog == 1 AND $ditjaarleid AND ($groupID == 190 OR $groupID == 181)) {	// PART LEID & TAB INTAKE
+
 			if ($extdebug == 1) { watchdog('php', '<pre>*** START EXTENSION VOG [groupID: '.$groupID.'] [op: '.$op.'] ***</pre>', NULL, WATCHDOG_DEBUG); }
       		#if ($extdebug == 1) { watchdog('php', '<pre>vogrecent:'. print_r($vogrecent, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
-    		if ($vogrecent) {
-    			#$date1				= date_create($event_startdate);
-    			#$date2				= date_create($vogrecent);
-    			#$diff 				= date_diff($date1,$date2);
-    			#$diffyears			= $diff->y;
-    			#$diffmonths		= $diff->m;
-    			#$diffmonthstotal	= $diffmonths + (12*$diffyears);
-    			#if ($extdebug == 1) { watchdog('php', '<pre>diffmonthstotal:'. print_r($diffmonthstotal, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
 
+			# BEPAAL OF DE VOG NOG GOED IS, HET DE EERSTE KEER IS, OF ER OPNIEUW EEN VOG MOET WORDEN AANGEVRAAGD 
+    		if ($vogrecent) {
     			if ($vogrecent AND strtotime($vogrecent) < strtotime($fiscalyear_start) AND strtotime($vogrecent) >= strtotime($grensvognoggoed)) { // Datum VOG in previous 2 fiscal years
     				$vogdatethisyear = 0;
     				$vognodig = 'noggoed';
-    				if ($extdebug == 1) { watchdog('php', '<pre>DATUM VOG ['.$vogrecent.'] VALT BINNEN DE VOORGAANDE 2 FISCALE JAREN ['.$grensvognoggoed.']</pre>', NULL, WATCHDOG_DEBUG); }
+    				if ($extdebug == 1) { watchdog('php', '<pre>DATUM VOG ['.$vogrecent.'] IS RECENTER DAN START VAN AFGELOPEN 3 FISCALE JAREN (INCL.HUIDIGE) ['.$grensvognoggoed.']</pre>', NULL, WATCHDOG_DEBUG); }
     			}
     			if ($vogrecent AND strtotime($vogrecent) >= strtotime($fiscalyear_start))	{ // Datum VOG binnen het huidige fiscal year
     				$vogdatethisyear = 0;
@@ -570,12 +673,11 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
     			if ($vogrecent AND strtotime($vogrecent) < strtotime($grensvognoggoed))		{ // Datum VOG ouder dan 3 fiscale jaren
     				$vogdatethisyear = 0;
     				$vognodig = 'opnieuw';
-    				if ($extdebug == 1) { watchdog('php', '<pre>DATUM VOG ['.$vogrecent.'] IS OUDER DAN DE START VAN DE VOORGAANDE 2 FISCALE JAREN ['.$grensvognoggoed.']</pre>', NULL, WATCHDOG_DEBUG); }
+    				if ($extdebug == 1) { watchdog('php', '<pre>DATUM VOG ['.$vogrecent.'] IS OUDER DAN START VAN AFGELOPEN 3 FISCALE JAREN (INCL.HUIDIGE)['.$grensvognoggoed.']</pre>', NULL, WATCHDOG_DEBUG); }
     			}
 
-    			#if ($vogrecent && $diffmonthstotal >  34)   								{ $vognodig = 'opnieuw'; }
-    			#if ($vogrecent && $diffmonthstotal <= 34 && $vogrecent < $fiscalyear_start) { $vognodig = 'noggoed'; }
-       			#if ($extdebug == 1) { watchdog('php', '<pre>strtotime(vogrecent):' . print_r(strtotime($vogrecent), TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+       			if ($extdebug == 1) { watchdog('php', '<pre>strtotime(vogrecent):' . print_r(strtotime($vogrecent), TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+       			if ($extdebug == 1) { watchdog('php', '<pre>strtotime(grensvognoggoed):' . print_r(strtotime($grensvognoggoed), TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
        			#if ($extdebug == 1) { watchdog('php', '<pre>strtotime(fiscalyear_start):' . print_r(strtotime($fiscalyear_start), TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
        			#if ($extdebug == 1) { watchdog('php', '<pre>vogrecent:' . print_r($vogrecent, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
        			#if ($extdebug == 1) { watchdog('php', '<pre>fiscalyear_start:' . print_r($fiscalyear_start, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
@@ -591,7 +693,15 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
     		if ($part_functie == 'bestuurslid')	 			{ $vognodig = 'elkjaar'; }
     		if ($extdebug == 1) { watchdog('php', '<pre>vognodig3:'. print_r($vognodig, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
     		
-   			// WERK DE GEGEVENS IN TAB INTAKE OVER DE VOG BIJ
+     		# CHECK EV EN OF ER EEN VOG VERZOEK IS DAT VALT BINNEN HET HUIDIGE FISCALE JAAR
+      		$verzoekditjaar = 0;
+			if (strtotime($part_vogverzocht) >= strtotime($fiscalyear_start) AND strtotime($part_vogverzocht) <= strtotime($fiscalyear_end)) {
+				// alleen indien vogverzocht binnen huidige fiscale jaar valt
+				$verzoekditjaar = 1;
+			}
+			if ($extdebug == 1) { watchdog('php', '<pre>verzoekditjaar:' . print_r($verzoekditjaar, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+
+   			// WERK DE GEGEVENS IN TAB INTAKE OVER DE VOG BIJ (indien er een part_vog_datum is)
     		if ($extvog == 1 AND $part_vogdatum AND empty($vogrecent)) {
     			$params_vog_tab = array(
 					'contact_type' => 'Individual',
@@ -609,253 +719,311 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
    			// WERK DE GEGEVENS IN PART LEID VOG BIJ
    			if ($extvog == 1 AND $vognodig) { // vognodig zou altijd gevuld moeten zijn
 				$params_vog_part = array(
-      				'event_id'	   => $part_eventid,
+      				'debug'        => 1,
    					'id'           => $part_id,
+					'event_id'	   => $part_eventid,
    					#'contact_id'   => $contact_id,
-   					'custom_586'   => $vognodig,
+   					#'custom_586'   => $vognodig,
+   					#'custom_605'   => $vognodig,
+   					'custom_990'   => $vognodig,
     			);
-    			if ($vognodig == 'noggoed') {
+    			if ($vognodig == 'noggoed') { 
 					#$params_vog_part['custom_603'] = $vogrecent;
 					#$params_vog_part['custom_602'] = $vogkenmerk;
 				}
    				if ($extdebug == 1) { watchdog('php', '<pre>params_vog_part:' . print_r($params_vog_part, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-				#if ($vogrecent AND $vognodig == 'noggoed') {
-    				#if ($groupID == 181) { 	// UPDATE PART LEID VOG BIJ EDIT VAN TAB (INTAKE) (indien de vog nog goed is)
-					if ($extvog == 1)	{ $result = civicrm_api3('Participant', 'create', $params_vog_part); }
-					#if ($extdebug == 1) { watchdog('php', '<pre>params_vog_part_result:' . print_r($result, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-					if ($extdebug == 1) { watchdog('php', '<pre>params_vog_part EXECUTED [groupID: '.$groupID.']</pre>', NULL, WATCHDOG_DEBUG); }
-				#}
+				if ($extvog == 1)	{ $result = civicrm_api3('Participant', 'create', $params_vog_part); }
+				#if ($extdebug == 1) { watchdog('php', '<pre>params_vog_part_result:' . print_r($result, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+				if ($extdebug == 1) { watchdog('php', '<pre>params_vog_part EXECUTED [groupID: '.$groupID.']</pre>', NULL, WATCHDOG_DEBUG); }
+    			#$params_participant['custom_586'] = $vognodig;
+    			#$result = civicrm_api3('Participant', 'create', $params_participant);
+   				#if ($extdebug == 1) { watchdog('php', '<pre>params_participant_nodig:' . print_r($params_participant, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+				#if ($extdebug == 1) { watchdog('php', '<pre>params_participant nodig EXECUTED [groupID: '.$groupID.']</pre>', NULL, WATCHDOG_DEBUG); }
    			}
    			// WERK DE VOG ACTIVITIES BIJ MET DE JUISTE STATUS
-		if ($extvog == 1 AND ($groupID == 190 OR $groupID == 181) AND in_array($vognodig, array("eerstex", "elkjaar", "opnieuw"))) {
+			if ($extvog == 1 AND ($groupID == 190 OR $groupID == 181) AND in_array($vognodig, array("eerstex", "elkjaar", "opnieuw","noggoed"))) {
 
-   			if ($extdebug == 1) { watchdog('php', '<pre>--- VOG ACTIVITIES [GET] [groupID: '.$groupID.'] [op: '.$op.'] ---</pre>', NULL, WATCHDOG_DEBUG); }
-			// ************************************************************************************************************
-			// GET ACTIVITIES MBT. VOG
-			// ************************************************************************************************************
-			// GET ACTIVITIES 'VOG VERZOEK'
-   			$params_vog_activity_verzoek_get = array(		// zoek activities 'VOG verzoek'
-  				'sequential' => 1,
-  				'return' => array("id", "activity_date_time", "status_id", "subject"),
-  				'target_contact_id' => $contact_id,
-  				'activity_type_id' => "VOG verzoek",
-  				'activity_date_time' => array('>' => $fiscalyear_start),
-  			);
-  			#if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_verzoek_get:' . print_r($params_vog_activity_verzoek_get, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-  			$result = civicrm_api3('Activity', 'get', $params_vog_activity_verzoek_get);
-  			#if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_verzoek_get_result:' . print_r($result, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-  			#if ($extdebug == 1) { watchdog('php', '<pre>result_count_verzoek:' . print_r($result['count'], TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-  			if ($result['count'] == 1) {
-  				$vogverzoek_activity_id		= $result['values'][0]['id'];
-  				$vogverzoek_activity_status	= $result['values'][0]['status_id'];
-	  			if ($extdebug == 1) { watchdog('php', '<pre>vogverzoek_activity_id:' . print_r($vogverzoek_activity_id, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-				if ($extdebug == 1) { watchdog('php', '<pre>vogverzoek_activity_status:' . print_r($vogverzoek_activity_status, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-  			} else {
-				$vogverzoek_activity_id		= NULL;
-  				$vogverzoek_activity_status	= NULL;
-  			}
-			// GET ACTIVITIES 'VOG AANVRAAG'
-  			$params_vog_activity_aanvraag_get = array(		// zoek activities 'VOG aanvraag'
-   				'sequential' => 1,
-  				'return' => array("id", "activity_date_time", "status_id", "subject"),
-  				'target_contact_id' => $contact_id,
-  				'activity_type_id' => "VOG aanvraag",
-  				'activity_date_time' => array('>' => $fiscalyear_start),
-  			);
-  			#if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_aanvraag_get:' . print_r($params_vog_activity_aanvraag_get, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-   			$result = civicrm_api3('Activity', 'get', $params_vog_activity_aanvraag_get);
-  			#if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_aanvraag_get_result:' . print_r($result, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-  			#if ($extdebug == 1) { watchdog('php', '<pre>result_count_aanvraag:' . print_r($result['count'], TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-  			if ($result['count'] == 1) {
-  				$vogaanvraag_activity_id		= $result['values'][0]['id'];
-  				$vogaanvraag_activity_status	= $result['values'][0]['status_id'];
-	  			if ($extdebug == 1) { watchdog('php', '<pre>vogaanvraag_activity_id:' . print_r($vogaanvraag_activity_id, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-  				if ($extdebug == 1) { watchdog('php', '<pre>vogaanvraag_activity_status:' . print_r($vogaanvraag_activity_status, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-  			} else {
-				$vogaanvraag_activity_id		= NULL;
-  				$vogaanvraag_activity_status	= NULL;
-  			}
-  			// GET ACTIVITIES 'VOG ONTVANGST'
-   			$params_vog_activity_ontvangst_get = array(		// zoek activities 'VOG ontvangst'
-  				'sequential' => 1,
-  				'return' => array("id", "activity_date_time", "status_id", "subject"),
-  				'target_contact_id' => $contact_id,
-  				'activity_type_id' => "VOG ontvangst",
-  				'activity_date_time' => array('>' => $fiscalyear_start),
-  			);
-  			#if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_ontvangst_get:' . print_r($params_vog_activity_ontvangst_get, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-  			$result = civicrm_api3('Activity', 'get', $params_vog_activity_ontvangst_get);
-  			#if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_ontvangst_get_result:' . print_r($result, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-  			#if ($extdebug == 1) { watchdog('php', '<pre>result_count_ontvangst:' . print_r($result['count'], TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-  			if ($result['count'] == 1) {
-  				$vogontvangst_activity_id		= $result['values'][0]['id'];
-  				$vogontvangst_activity_status	= $result['values'][0]['status_id'];
-	  			if ($extdebug == 1) { watchdog('php', '<pre>vogontvangst_activity_id:' . print_r($vogontvangst_activity_id, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-				if ($extdebug == 1) { watchdog('php', '<pre>vogontvangst_activity_status:' . print_r($vogontvangst_activity_status, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-  			} else {
-				$vogontvangst_activity_id		= NULL;
-  				$vogontvangst_activity_status	= NULL;
-  			}
-			// ************************************************************************************************************
-			// CREATE ACTIVITIES
-			// ************************************************************************************************************
-			// CREATE AN ACTIVITY 'VERZOEK' ALS VOG AANVRAAG IS VERZOCHT EN ER IS NOG GEEN BIJBEHORENDE ACTIVITY
-			if ($extdebug == 1) { watchdog('php', '<pre>--- VOG ACTIVITIES [CREATE] [groupID: '.$groupID.'] [op: '.$op.'] ---</pre>', NULL, WATCHDOG_DEBUG); }
-
-			if ($part_vogingediend) {
-				$datum_aanvraag = $part_vogingediend;
-			} else {
-				$newdate		 = strtotime ( '+14 day' , strtotime ( $part_vogverzocht ) ) ;
-				$datum_aanvraag = date ( 'Y-m-d H:i:s' , $newdate );
-			}
-			if (strtotime($datum_aanvraag) >= strtotime($event_startdate))	{ $datum_aanvraag  = date($event_startdate, strtotime("-1 week")); } // als datum aanvraag > start kamp is, dan scheduled datum aanvraag = start kamp - 1wk 
-
-			if ($part_vogontvangst) { // VOG-ontvangst is datum van ontvangst, indien leeg dan datum ingediend of datum verzocht (zou ook datum vog kunnen zijn)
-				$datum_ontvangst = $part_vogontvangst;
-			} elseif ($part_vogingediend) {
-				$newdate		 = strtotime ( '+28 day' , strtotime ( $part_vogingediend ) ) ;
-				$datum_ontvangst = date ( 'Y-m-d H:i:s' , $newdate );
-			} else {
-				$newdate		 = strtotime ( '+42 day' , strtotime ( $part_vogverzocht ) ) ;
-				$datum_ontvangst = date ( 'Y-m-d H:i:s' , $newdate );
-			}
-			if (strtotime($datum_ontvangst) >= strtotime($event_startdate))	{ $datum_ontvangst  = date($event_startdate, strtotime("-1 week")); } // als datum aanvraag > start kamp is, dan scheduled datum ontvangst = start kamp - 1wk	
-			if ($extdebug == 1) { watchdog('php', '<pre>part_vogverzocht:' . print_r($part_vogverzocht, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-			if ($extdebug == 1) { watchdog('php', '<pre>part_vogingediend:' . print_r($part_vogingediend, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-			if ($extdebug == 1) { watchdog('php', '<pre>part_vogontvangst:' . print_r($part_vogontvangst, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-			if ($extdebug == 1) { watchdog('php', '<pre>part_vogdatum:' . print_r($part_vogdatum, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-			if ($extdebug == 1) { watchdog('php', '<pre>scheduled_datum_aanvraag:' . print_r($datum_aanvraag, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-			if ($extdebug == 1) { watchdog('php', '<pre>scheduled_datum_ontvangst:' . print_r($datum_ontvangst, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-
-			// CREATE AN ACTIVITY 'VERZOEK' ALS VOG AANVRAAG IS VERZOCHT EN ER IS NOG GEEN BIJBEHORENDE ACTIVITY
-			if (empty($vogverzoek_activity_id) AND  $part_vogverzocht) {
-  				$params_vog_activity_create_verzoek = array(		// update VOG aanvraag naar Completed als VOG ontvangst Completed is
-  					#"debug"					=> 1,
-  					"source_contact_id"		=> 1,
-  					"target_id"				=> $contact_id,
-  					'status_id'				=> "Completed",
-  					'activity_type_id' 		=> "VOG verzoek",
-  					'subject' 				=> "VOG aanvraag verzocht",
-  					'activity_date_time'	=> $part_vogverzocht,
+				// ************************************************************************************************************
+				// GET ACTIVITIES MBT. VOG
+				// ************************************************************************************************************
+   				if ($extdebug == 1) { watchdog('php', '<pre>--- VOG ACTIVITIES [GET] [groupID: '.$groupID.'] [op: '.$op.'] ---</pre>', NULL, WATCHDOG_DEBUG); }
+				// GET ACTIVITIES 'VOG VERZOEK'
+   				$params_vog_activity_verzoek_get = array(		// zoek activities 'VOG verzoek'
+  					'sequential' => 1,
+  					'return' => array("id", "activity_date_time", "status_id", "subject"),
+  					'target_contact_id' => $contact_id,
+  					'activity_type_id' => "VOG verzoek",
+  					'activity_date_time' => array('BETWEEN' => array("$fiscalyear_start", "$fiscalyear_end")),
   				);
-  				if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_create_verzoek:' . print_r($params_vog_activity_create_verzoek, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-				if ($extvog == 1)	{ $result = civicrm_api3('Activity', 'create', $params_vog_activity_create_verzoek); }
-				#if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_create_verzoek_result:' . print_r($result, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-				#if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_create_verzoek_result_values:' . print_r(key($result['values']), TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-				if (empty($vogverzoek_activity_id))		{ $vogverzoek_activity_id		= key($result['values']); }
-				if (empty($vogverzoek_activity_status))	{ $vogverzoek_activity_status	= 1; }
-				if ($extdebug == 1) { watchdog('php', '<pre>vogverzoek_activity_id2:' . print_r($vogverzoek_activity_id, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-				if ($extdebug == 1) { watchdog('php', '<pre>vogverzoek_activity_status2:' . print_r($vogverzoek_activity_status, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-			}
-			// CREATE AN ACTIVITY 'AANVRAAG' ALS VOG AANVRAAG IS VERZOCHT OF INGEDIEND EN ER IS NOG GEEN BIJBEHORENDE ACTIVITY
-  			if (empty($vogaanvraag_activity_id) AND $datum_aanvraag AND ($part_vogverzocht OR $part_vogingediend)) {
-  				$params_vog_activity_create_aanvraag = array(
-  					"source_contact_id"		=> 1,
-   					"target_id"				=> $contact_id,
-  					'status_id'				=> "Scheduled",
-  					'activity_type_id' 		=> "VOG aanvraag",
-  					'subject' 				=> "VOG aanvraag ingediend",
-  					'activity_date_time'	=> $datum_aanvraag,
+  				#if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_verzoek_get:' . print_r($params_vog_activity_verzoek_get, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+  				$result_verzoek = civicrm_api3('Activity', 'get', $params_vog_activity_verzoek_get);
+  				#if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_verzoek_get_result:' . print_r($result_verzoek, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+  				#if ($extdebug == 1) { watchdog('php', '<pre>result_count_verzoek:' . print_r($result_verzoek['count'], TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+  				if ($result_verzoek['count'] == 1) {
+  					$vogverzoek_activity_id		= $result_verzoek['values'][0]['id'];
+  					$vogverzoek_activity_status	= $result_verzoek['values'][0]['status_id'];
+	  				if ($extdebug == 1) { watchdog('php', '<pre>vogverzoek_activity_id:' . print_r($vogverzoek_activity_id, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+					if ($extdebug == 1) { watchdog('php', '<pre>vogverzoek_activity_status:' . print_r($vogverzoek_activity_status, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+  				} else {
+					$vogverzoek_activity_id		= NULL;
+  					$vogverzoek_activity_status	= NULL;
+  				}
+				// GET ACTIVITIES 'VOG AANVRAAG'
+  				$params_vog_activity_aanvraag_get = array(		// zoek activities 'VOG aanvraag'
+   					'sequential' => 1,
+  					'return' => array("id", "activity_date_time", "status_id", "subject"),
+  					'target_contact_id' => $contact_id,
+  					'activity_type_id' => "VOG aanvraag",
+  					'activity_date_time' => array('BETWEEN' => array("$fiscalyear_start", "$fiscalyear_end")),
   				);
-  				if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_create_aanvraag:' . print_r($params_vog_activity_create_aanvraag, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-				if ($extvog == 1)	{ $result = civicrm_api3('Activity', 'create', $params_vog_activity_create_aanvraag); }
-				#if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_create_aanvraag_result:' . print_r($result, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-				#if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_create_aanvraag_result_values:' . print_r(key($result['values']), TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-				if (empty($vogaanvraag_activity_id))		{ $vogaanvraag_activity_id		= key($result['values']); }
-				if (empty($vogaanvraag_activity_status))	{ $vogaanvraag_activity_status	= 1; }
-				if ($extdebug == 1) { watchdog('php', '<pre>vogaanvraag_activity_id2:' . print_r($vogaanvraag_activity_id, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-				if ($extdebug == 1) { watchdog('php', '<pre>vogaanvraag_activity_status2:' . print_r($vogaanvraag_activity_status, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-			}
-
-			// CREATE AN ACTIVITY 'ONTVANGST' ALS VOG AANVRAAG IS INGEDIEND OF ONTVANGST BEVESTIGD EN ER IS NOG GEEN BIJBEHORENDE ACTIVITY
-			if (empty($vogontvangst_activity_id) AND $datum_ontvangst AND ($part_vogverzocht OR $part_vogingediend)) {
-  				$params_vog_activity_create_ontvangst = array(		// update VOG aanvraag naar Completed als VOG ontvangst Completed is
-  					"source_contact_id"		=> 1,
-  					"target_id"				=> $contact_id,
-  					'status_id'				=> "Scheduled",
-  					'activity_type_id' 		=> "VOG ontvangst",
-  					'subject' 				=> "VOG ontvangst bevestigd",
-  					'activity_date_time'	=> $datum_ontvangst,
+  				#if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_aanvraag_get:' . print_r($params_vog_activity_aanvraag_get, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+   				$result_aanvraag = civicrm_api3('Activity', 'get', $params_vog_activity_aanvraag_get);
+  				#if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_aanvraag_get_result:' . print_r($result_aanvraag, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+  				#if ($extdebug == 1) { watchdog('php', '<pre>result_count_aanvraag:' . print_r($result_aanvraag['count'], TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+  				if ($result_aanvraag['count'] == 1) {
+  					$vogaanvraag_activity_id		= $result_aanvraag['values'][0]['id'];
+  					$vogaanvraag_activity_status	= $result_aanvraag['values'][0]['status_id'];
+	  				if ($extdebug == 1) { watchdog('php', '<pre>vogaanvraag_activity_id:' . print_r($vogaanvraag_activity_id, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+  					if ($extdebug == 1) { watchdog('php', '<pre>vogaanvraag_activity_status:' . print_r($vogaanvraag_activity_status, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+  				} else {
+					$vogaanvraag_activity_id		= NULL;
+  					$vogaanvraag_activity_status	= NULL;
+  				}
+  				// GET ACTIVITIES 'VOG ONTVANGST'
+  				$params_vog_activity_ontvangst_get = array(		// zoek activities 'VOG aanvraag'
+   					'sequential' => 1,
+  					'return' => array("id", "activity_date_time", "status_id", "subject"),
+  					'target_contact_id' => $contact_id,
+  					'activity_type_id' => "VOG ontvangst",
+  					'activity_date_time' => array('BETWEEN' => array("$fiscalyear_start", "$fiscalyear_end")),
   				);
-  				if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_create_ontvangst:' . print_r($params_vog_activity_create_ontvangst, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-				if ($extvog == 1)	{ $result = civicrm_api3('Activity', 'create', $params_vog_activity_create_ontvangst); }
-				#if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_create_ontvangst_result:' . print_r($result, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-				#if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_create_ontvangst_result_values:' . print_r(key($result['values']), TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-				if (empty($vogontvangst_activity_id))		{ $vogontvangst_activity_id			= key($result['values']); }
-				if (empty($vogontvangst_activity_status))	{ $vogontvangst_activity_status		= 1; }
-				if ($extdebug == 1) { watchdog('php', '<pre>vogontvangst_activity_id2:' . print_r($vogontvangst_activity_id, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-				if ($extdebug == 1) { watchdog('php', '<pre>vogontvangst_activity_status2:' . print_r($vogontvangst_activity_status, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+  				#if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_ontvangst_get:' . print_r($params_vog_activity_ontvangst_get, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+  				$result_ontvangst = civicrm_api3('Activity', 'get', $params_vog_activity_ontvangst_get);
+  				#if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_ontvangst_get_result:' . print_r($result, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+  				#if ($extdebug == 1) { watchdog('php', '<pre>result_count_ontvangst:' . print_r($result['count'], TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+  				if ($result_ontvangst['count'] == 1) {
+  					$vogontvangst_activity_id		= $result_ontvangst['values'][0]['id'];
+  					$vogontvangst_activity_status	= $result_ontvangst['values'][0]['status_id'];
+	  				if ($extdebug == 1) { watchdog('php', '<pre>vogontvangst_activity_id:' . print_r($vogontvangst_activity_id, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+					if ($extdebug == 1) { watchdog('php', '<pre>vogontvangst_activity_status:' . print_r($vogontvangst_activity_status, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+  				} else {
+					$vogontvangst_activity_id		= NULL;
+  					$vogontvangst_activity_status	= NULL;
+  				}
+				// ************************************************************************************************************
+				// CREATE ACTIVITIES
+				// ************************************************************************************************************
+				// CREATE AN ACTIVITY 'VERZOEK' ALS VOG AANVRAAG IS VERZOCHT EN ER IS NOG GEEN BIJBEHORENDE ACTIVITY
+				if ($extvog == 1  AND $verzoekditjaar == 1 AND in_array($vognodig, array("eerstex", "elkjaar", "opnieuw")) ) {
+
+					if ($extdebug == 1) { watchdog('php', '<pre>--- VOG ACTIVITIES [CREATE] [groupID: '.$groupID.'] [op: '.$op.'] ---</pre>', NULL, WATCHDOG_DEBUG); }
+
+					if ($part_vogingediend) {
+						$datum_aanvraag  = $part_vogingediend;											// ZET DATUM AANVRAAG VAN ACTIVITY GELIJK AAN AANVRAAGDATUM
+					} else {
+						$newdate		 = strtotime ( '+30 day' , strtotime ( $part_vogverzocht ) ) ;	// ZET DEADLINE AANVRAAG OP 30 DAGEN NA VERZOEK
+						$datum_aanvraag  = date ( 'Y-m-d H:i:s' , $newdate );
+					}
+					// *********** zet even tijdelijk alle datumaanvraag deadlines op 13 dagen na nu (om herinneringen te laten sturen)
+					if (in_array($vogaanvraag_activity_status, array(4,5,8))) {
+						if ($extdebug == 1) { watchdog('php', '<pre>datum_aanvraag_0:' . print_r($datum_aanvraag, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+						if (in_array($vogaanvraag_activity_status, array(4))) {							// ZET ACTIVITEITEN MET STATUS HERINNERD OP 14 DAGEN VANAF NU
+							$newdate 	= strtotime ('+14 day' , strtotime ($todaydatetime) ) ;
+						}
+						if (in_array($vogaanvraag_activity_status, array(5))) {							// ZET ACTIVITEITEN MET STATUS ONBEREIKBAAR OP 7 DAGEN VANAF NU
+							$newdate 	= strtotime ('+7 day' , strtotime ($todaydatetime) ) ;
+						}
+						if (in_array($vogaanvraag_activity_status, array(8))) {							// ZET ACTIVITEITEN MET STATUS VERLOPEN OP VANDAAG
+							$newdate 	= strtotime ( '-1 hour' , strtotime ($todaydatetime) ) ;
+						}
+						$datum_ontvangst = date ( 'Y-m-d H:i:s' , $newdate );
+						if ($extdebug == 1) { watchdog('php', '<pre>datum_ontvangst_1:' . print_r($datum_ontvangst, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+					}
+					// als datum aanvraag > start kamp is, dan scheduled datum aanvraag = start kamp - 1wk 
+					if (strtotime($datum_aanvraag) >= strtotime($event_startdate))	{ $datum_aanvraag  = date($event_startdate, strtotime("-1 week")); } 
+
+					if ($part_vogontvangst) { // VOG-ontvangst is datum van ontvangst, indien leeg dan datum ingediend of datum verzocht (zou ook datum vog kunnen zijn)
+						$datum_ontvangst = $part_vogontvangst;											// ZET DATUM ONTVANGST VAN ACTIVITY GELIJK AAN ONTVANGSTDATUM
+					} elseif ($part_vogingediend) {
+						$newdate		 = strtotime ( '+30 day' , strtotime ( $part_vogingediend ) ) ;	// ZET 'DEADLINE' ONTVANGST OP 30 DAGEN NA INDIENEN AANVRAAG
+						$datum_ontvangst = date ( 'Y-m-d H:i:s' , $newdate );
+					} else {																			// ZET EEN FICTIEVE DATUM VOOR ACTIVITY ONTVANGST 6 WEKEN NA VERZOEKDATUM
+						$newdate		 = strtotime ( '+42 day' , strtotime ( $part_vogverzocht ) ) ;
+						$datum_ontvangst = date ( 'Y-m-d H:i:s' , $newdate );
+					}
+					// ***********  zet even tijdelijk alle datumontvangst deadlines op 20 dagen na nu (om herinneringen te laten sturen)
+					if (in_array($vogontvangst_activity_status, array(2,4,5,8))) {
+						if ($extdebug == 1) { watchdog('php', '<pre>datum_ontvangst_0:' . print_r($datum_ontvangst, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+						if (in_array($vogontvangst_activity_status, array(4))) {						// ZET ACTIVITEITEN MET STATUS HERINNERD OP 21 DAGEN VANAF NU
+							$newdate 	= strtotime ('+21 day' , strtotime ($todaydatetime) ) ;
+						}
+						if (in_array($vogontvangst_activity_status, array(5,8))) {						// ZET ACTIVITEITEN MET STATUS ONBEREIKBAAR OP 14 DAGEN VANAF NU
+							$newdate 	= strtotime ('+14 day' , strtotime ($todaydatetime) ) ;
+						}
+						if (!in_array($vogaanvraag_activity_status, array(2))) {						// INDIEN NOG GEEN AANVRAAG DAN STATUS ACTIVITEIT ONTVANGST 30 DAGEN NA NU
+							$newdate 	= strtotime ('+30 day' , strtotime ($todaydatetime) ) ;
+						}
+						$datum_ontvangst = date ( 'Y-m-d H:i:s' , $newdate );
+						if ($extdebug == 1) { watchdog('php', '<pre>datum_ontvangst_1:' . print_r($datum_ontvangst, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+					}
+					// als datum aanvraag > start kamp is, dan scheduled datum ontvangst = start kamp - 1wk
+					if (strtotime($datum_ontvangst)	>= strtotime($event_startdate))	{ $datum_ontvangst  = date($event_startdate, strtotime("-1 week")); }
+					if ($extdebug == 1) { watchdog('php', '<pre>part_vogverzocht:' . print_r($part_vogverzocht, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+					if ($extdebug == 1) { watchdog('php', '<pre>part_vogingediend:' . print_r($part_vogingediend, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+					if ($extdebug == 1) { watchdog('php', '<pre>part_vogontvangst:' . print_r($part_vogontvangst, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+					if ($extdebug == 1) { watchdog('php', '<pre>part_vogdatum:' . print_r($part_vogdatum, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+					if ($extdebug == 1) { watchdog('php', '<pre>scheduled_datum_aanvraag:' . print_r($datum_aanvraag, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+					if ($extdebug == 1) { watchdog('php', '<pre>scheduled_datum_ontvangst:' . print_r($datum_ontvangst, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+
+					// CREATE AN ACTIVITY 'VERZOEK' ALS VOG AANVRAAG IS VERZOCHT EN ER IS NOG GEEN BIJBEHORENDE ACTIVITY
+					if (empty($vogverzoek_activity_id) AND  $part_vogverzocht) {
+  						$params_vog_activity_create_verzoek = array(		// update VOG aanvraag naar Completed als VOG ontvangst Completed is
+  							#"debug"					=> 1,
+  							"source_contact_id"		=> 1,
+  							"target_id"				=> $contact_id,
+  							'status_id'				=> "Completed",
+  							'activity_type_id' 		=> "VOG verzoek",
+  							'subject' 				=> "VOG aanvraag verzocht",
+  							'activity_date_time'	=> $part_vogverzocht,
+  						);
+  						if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_create_verzoek:' . print_r($params_vog_activity_create_verzoek, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+  						if ($extvog == 1 AND in_array($vognodig, array("eerstex", "elkjaar", "opnieuw"))) { $result = civicrm_api3('Activity', 'create', $params_vog_activity_create_verzoek); }
+						#if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_create_verzoek_result:' . print_r($result, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+						#if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_create_verzoek_result_values:' . print_r(key($result['values']), TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+						if (empty($vogverzoek_activity_id))		{ $vogverzoek_activity_id		= key($result['values']); }
+						if (empty($vogverzoek_activity_status))	{ $vogverzoek_activity_status	= 1; }
+						if ($extdebug == 1) { watchdog('php', '<pre>vogverzoek_activity_id2:' . print_r($vogverzoek_activity_id, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+						if ($extdebug == 1) { watchdog('php', '<pre>vogverzoek_activity_status2:' . print_r($vogverzoek_activity_status, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+					}
+					// CREATE AN ACTIVITY 'AANVRAAG' ALS VOG AANVRAAG IS VERZOCHT OF INGEDIEND EN ER IS NOG GEEN BIJBEHORENDE ACTIVITY
+  					if (empty($vogaanvraag_activity_id) AND $datum_aanvraag AND ($part_vogverzocht OR $part_vogingediend)) {
+  						$params_vog_activity_create_aanvraag = array(
+  							"source_contact_id"		=> 1,
+   							"target_id"				=> $contact_id,
+  							'status_id'				=> "Pending",
+  							'activity_type_id' 		=> "VOG aanvraag",
+  							'subject' 				=> "VOG aanvraag ingediend",
+  							'activity_date_time'	=> $datum_aanvraag,
+  						);
+  						if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_create_aanvraag:' . print_r($params_vog_activity_create_aanvraag, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+  						if ($extvog == 1 AND in_array($vognodig, array("eerstex", "elkjaar", "opnieuw"))) { $result = civicrm_api3('Activity', 'create', $params_vog_activity_create_aanvraag); }
+						#if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_create_aanvraag_result:' . print_r($result, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+						#if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_create_aanvraag_result_values:' . print_r(key($result['values']), TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+						if (empty($vogaanvraag_activity_id))		{ $vogaanvraag_activity_id		= key($result['values']); }
+						if (empty($vogaanvraag_activity_status))	{ $vogaanvraag_activity_status	= 1; }
+						if ($extdebug == 1) { watchdog('php', '<pre>vogaanvraag_activity_id2:' . print_r($vogaanvraag_activity_id, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+						if ($extdebug == 1) { watchdog('php', '<pre>vogaanvraag_activity_status2:' . print_r($vogaanvraag_activity_status, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+					}
+
+					// CREATE AN ACTIVITY 'ONTVANGST' ALS VOG AANVRAAG IS INGEDIEND OF ONTVANGST BEVESTIGD EN ER IS NOG GEEN BIJBEHORENDE ACTIVITY
+					if (empty($vogontvangst_activity_id) AND $datum_ontvangst AND ($part_vogverzocht OR $part_vogingediend)) {
+  						$params_vog_activity_create_ontvangst = array(		// update VOG aanvraag naar Completed als VOG ontvangst Completed is
+  							"source_contact_id"		=> 1,
+  							"target_id"				=> $contact_id,
+  							'status_id'				=> "Pending",
+  							'activity_type_id' 		=> "VOG ontvangst",
+  							'subject' 				=> "VOG ontvangst bevestigd",
+  							'activity_date_time'	=> $datum_ontvangst,
+  						);
+  						if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_create_ontvangst:' . print_r($params_vog_activity_create_ontvangst, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+  						if ($extvog == 1 AND in_array($vognodig, array("eerstex", "elkjaar", "opnieuw"))) { $result = civicrm_api3('Activity', 'create', $params_vog_activity_create_ontvangst); }
+						#if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_create_ontvangst_result:' . print_r($result, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+						#if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_create_ontvangst_result_values:' . print_r(key($result['values']), TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+						if (empty($vogontvangst_activity_id))		{ $vogontvangst_activity_id			= key($result['values']); }
+						if (empty($vogontvangst_activity_status))	{ $vogontvangst_activity_status		= 1; }
+						if ($extdebug == 1) { watchdog('php', '<pre>vogontvangst_activity_id2:' . print_r($vogontvangst_activity_id, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+						if ($extdebug == 1) { watchdog('php', '<pre>vogontvangst_activity_status2:' . print_r($vogontvangst_activity_status, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+					}
+				}
+				// ************************************************************************************************************
+				// UPDATE ACTIVITIES
+				// ************************************************************************************************************
+				if ($extvog == 1  AND $verzoekditjaar == 1 AND in_array($vognodig, array("eerstex", "elkjaar", "opnieuw")) ) {
+
+					if ($extdebug == 1) { watchdog('php', '<pre>--- VOG ACTIVITIES [UPDATE] [groupID: '.$groupID.'] [op: '.$op.'] ---</pre>', NULL, WATCHDOG_DEBUG); }
+					#if ($extdebug == 1) { watchdog('php', '<pre>part_vogverzocht:' . print_r($part_vogverzocht, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+					#if ($extdebug == 1) { watchdog('php', '<pre>todaydatetime:' . print_r($todaydatetime, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+
+					$diffsinceverzoek	= date_diff(date_create($part_vogverzocht),date_create($todaydatetime));
+					$dayssinceverzoek	= $diffsinceverzoek->format('%a');
+
+					if ($dayssinceverzoek >= 0  AND $dayssinceverzoek < 14)				{ $status_aanvraag  = "Pending"; }
+					if ($dayssinceverzoek >= 14 AND $dayssinceverzoek < 21)				{ $status_aanvraag  = "Left Message"; }
+					if ($dayssinceverzoek >= 21 AND $dayssinceverzoek < 30)				{ $status_aanvraag  = "Unreachable"; }
+					if ($dayssinceverzoek >= 30)										{ $status_aanvraag  = "No_show"; }
+					if (strtotime($part_vogingediend) >= strtotime($fiscalyear_start))	{ $status_aanvraag  = "Completed"; }
+					if (strtotime($part_vogdatum)	  >= strtotime($fiscalyear_start))	{ $status_aanvraag  = "Completed"; }	// als part_vogdatum binnen huidige fiscal year valt kan activity op completed
+
+					#if ($extdebug == 1) { watchdog('php', '<pre>todaydatetime:' . print_r($todaydatetime, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+					if ($extdebug == 1) { watchdog('php', '<pre>part_vogverzocht:' . print_r($part_vogverzocht, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+					#if ($extdebug == 1) { watchdog('php', '<pre>diffsinceverzoek:' . print_r($diffsinceverzoek, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+					if ($extdebug == 1) { watchdog('php', '<pre>dagen_sinds_verzoek:' . print_r($dayssinceverzoek, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+					if ($extdebug == 1) { watchdog('php', '<pre>status_aanvraag:' . print_r($status_aanvraag, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+
+					$diffsinceaanvraag	= date_diff(date_create($part_vogingediend),date_create($todaydatetime));
+					$dayssinceaanvraag	= $diffsinceaanvraag->format('%a');
+					if ($dayssinceaanvraag >= 0  AND $dayssinceaanvraag < 28)			{ $status_ontvangst = "Pending"; }
+					if ($dayssinceaanvraag >= 28 AND $dayssinceaanvraag < 42)			{ $status_ontvangst = "Left Message"; }
+					if ($dayssinceaanvraag >= 42)										{ $status_ontvangst = "Unreachable"; }
+					if ($dayssinceverzoek  >= 21 AND $status_ontvangst == "Pending")	{ $status_ontvangst = "Left Message"; } // als aanvraag Unreachable of No Show is -> schedule dan alsnog een reminder rond geplande ontvangstdatum
+					if (strtotime($todaydatetime) > strtotime($event_startdate))		{ $status_aanvraag  = "No_show"; }		// No show nadat de startdag van kamp gepasseerd is
+					if (strtotime($part_vogdatum) >= strtotime($fiscalyear_start))		{ $status_ontvangst = "Completed"; } 	// als part_vogdatum binnen huidige fiscal year valt kan activity op completed
+
+					if ($extdebug == 1) { watchdog('php', '<pre>part_vogontvangst:' . print_r($part_vogontvangst, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+					if ($extdebug == 1) { watchdog('php', '<pre>part_vogdatum:' . print_r($part_vogdatum, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+					#if ($extdebug == 1) { watchdog('php', '<pre>diffsinceaanvraag:' . print_r($diffsinceaanvraag, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+					if ($extdebug == 1) { watchdog('php', '<pre>dagen_sinds_aanvraag:' . print_r($dayssinceaanvraag, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+					if ($extdebug == 1) { watchdog('php', '<pre>status_ontvangst:' . print_r($status_ontvangst, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+					// UPDATE ACTIVITY ONTVANGST STATUS N.A.V. DAYS SINCE...
+			
+					#if ((in_array($vogaanvraag_activity_status, array("1", "4", "5", "8")) AND in_array($vogontvangst_activity_status, array("2"))) AND $part_vogingediend) {
+					if ($vogaanvraag_activity_id AND $datum_aanvraag AND $status_aanvraag AND $vogaanvraag_activity_id) {
+  						$params_vog_activity_change_aanvraag = array(
+  							'id'					=> $vogaanvraag_activity_id,
+  							'activity_type_id'		=> "VOG aanvraag",
+  							'activity_date_time'	=> $datum_aanvraag,
+ 							'subject' 				=> "VOG aanvraag ingediend",
+   							'status_id'				=> $status_aanvraag,
+  						);
+  					if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_change_aanvraag:' . print_r($params_vog_activity_change_aanvraag, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+					if ($extvog == 1)	{ $result = civicrm_api3('Activity', 'create', $params_vog_activity_change_aanvraag); }
+					#if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_change_aanvraag_result:' . print_r($result, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+					}
+				
+				// UPDATE ACTIVITY ONTVANGST STATUS NAV DAYS SINCE...
+				#if ((in_array($vogontvangst_activity_status, array("1", "4", "5", "8")) AND in_array($vogaanvraag_activity_status, array("2"))) AND $part_vogdatum AND $vognodig != 'noggoed') {
+				if ($vogontvangst_activity_id AND $datum_ontvangst AND $status_ontvangst AND $vogontvangst_activity_id) {
+  					$params_vog_activity_change_ontvangst = array(
+  						'id'					=> $vogontvangst_activity_id,
+  						'activity_type_id'		=> "VOG ontvangst",
+  						'activity_date_time'	=> $datum_ontvangst,
+  						'subject' 				=> "VOG ontvangst bevestigd",
+  						'status_id'				=> $status_ontvangst,
+  					);
+  					if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_change_ontvangst:' . print_r($params_vog_activity_change_ontvangst, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+					if ($extvog == 1)	{ $result = civicrm_api3('Activity', 'create', $params_vog_activity_change_ontvangst); }
+					#if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_change_ontvangst_result:' . print_r($result, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+					}
+				}
+				// ************************************************************************************************************
+				// DELETE ACTIVITIES (indien ze waren aangemaakt maar VOG nog goed was - deze actie zou niet nodig hoeven zijn)
+				// ************************************************************************************************************
+				if ($extvog == 1 AND in_array($vognodig, array("noggoed"))) {
+			    	if ($vogverzoek_activity_status != 2 	AND $vogverzoek_activity_id)	{
+			    		#$result = civicrm_api3('Activity', 'delete', array('id' => $vogverzoek_activity_id,));
+			    		#if ($extdebug == 1) { watchdog('php', '<pre>ACTIVITY VERWIJDERD vogverzoek:' . print_r($vogverzoek_activity_id, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+			    	}
+			    	if ($vogaanvraag_activity_status != 2 	AND $vogaanvraag_activity_id)	{
+			    		$result = civicrm_api3('Activity', 'delete', array('id' => $vogaanvraag_activity_id,));
+			    		if ($extdebug == 1) { watchdog('php', '<pre>ACTIVITY VERWIJDERD vogaanvraag:' . print_r($vogaanvraag_activity_id, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+			    	}
+			    	if ($vogontvangst_activity_status != 2 	AND $vogontvangst_activity_id)	{
+			    		$result = civicrm_api3('Activity', 'delete', array('id' => $vogontvangst_activity_id,));
+			    		if ($extdebug == 1) { watchdog('php', '<pre>ACTIVITY VERWIJDERD vogontvangst:' . print_r($vogontvangst_activity_id, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+			    	}
+				}
+				if ($extdebug == 1) { watchdog('php', '<pre>*** END EXTENSION VOG [groupID: '.$groupID.'] [op: '.$op.'] [kampleider: '.$displayname.'] ***</pre>', NULL, WATCHDOG_DEBUG); }
 			}
-			// ************************************************************************************************************
-			// UPDATE ACTIVITIES
-			// ************************************************************************************************************
-			if ($extdebug == 1) { watchdog('php', '<pre>--- VOG ACTIVITIES [UPDATE] [groupID: '.$groupID.'] [op: '.$op.'] ---</pre>', NULL, WATCHDOG_DEBUG); }
-			#$todaydatetime = date("Y-m-d H:i:s");
-			#if ($extdebug == 1) { watchdog('php', '<pre>part_vogverzocht:' . print_r($part_vogverzocht, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-			#if ($extdebug == 1) { watchdog('php', '<pre>todaydatetime:' . print_r($todaydatetime, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-
-			if (strtotime($part_vogverzocht) >= strtotime($fiscalyear_start))		{ // alleen idien vogverzocht binnen huidige fiscale jaar valt
-				$diffsinceverzoek	= date_diff(date_create($part_vogverzocht),date_create($todaydatetime));
-				$dayssinceverzoek	= $diffsinceverzoek->format('%a');
-
-				if ($dayssinceverzoek >= 0  AND $dayssinceverzoek < 14)				{ $status_aanvraag  = "Scheduled"; }
-				if ($dayssinceverzoek >= 14 AND $dayssinceverzoek < 21)				{ $status_aanvraag  = "Left Message"; }
-				if ($dayssinceverzoek >= 21 AND $dayssinceverzoek < 30)				{ $status_aanvraag  = "Unreachable"; }
-				if ($dayssinceverzoek >= 30)										{ $status_aanvraag  = "No_show"; }
-				if (strtotime($part_vogingediend) >= strtotime($fiscalyear_start))	{ $status_aanvraag  = "Completed"; }
-				if (strtotime($part_vogdatum)	  >= strtotime($fiscalyear_start))	{ $status_aanvraag  = "Completed"; }	// als part_vogdatum binnen huidige fiscal year valt kan activity op completed
-
-				#if ($extdebug == 1) { watchdog('php', '<pre>todaydatetime:' . print_r($todaydatetime, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-				if ($extdebug == 1) { watchdog('php', '<pre>part_vogverzocht:' . print_r($part_vogverzocht, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-				#if ($extdebug == 1) { watchdog('php', '<pre>diffsinceverzoek:' . print_r($diffsinceverzoek, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-				if ($extdebug == 1) { watchdog('php', '<pre>dagen_sinds_verzoek:' . print_r($dayssinceverzoek, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-				if ($extdebug == 1) { watchdog('php', '<pre>status_aanvraag:' . print_r($status_aanvraag, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-
-				$diffsinceaanvraag	= date_diff(date_create($part_vogingediend),date_create($todaydatetime));
-				$dayssinceaanvraag	= $diffsinceaanvraag->format('%a');
-				if ($dayssinceaanvraag >= 0  AND $dayssinceaanvraag < 28)			{ $status_ontvangst = "Scheduled"; }
-				if ($dayssinceaanvraag >= 28 AND $dayssinceaanvraag < 42)			{ $status_ontvangst = "Left Message"; }
-				if ($dayssinceaanvraag >= 42)										{ $status_ontvangst = "Unreachable"; }
-				if ($dayssinceverzoek  >= 21 AND $status_ontvangst == "Scheduled")	{ $status_ontvangst = "Left Message"; } // als aanvraag Unreachable of No Show is -> schedule dan alsnog een reminder rond geplande ontvangstdatum
-				if (strtotime($todaydatetime) > strtotime($event_startdate))		{ $status_aanvraag  = "No_show"; }		// No show nadat de startdag van kamp gepasseerd is
-				if (strtotime($part_vogdatum) >= strtotime($fiscalyear_start))		{ $status_ontvangst = "Completed"; } 	// als part_vogdatum binnen huidige fiscal year valt kan activity op completed
-
-				if ($extdebug == 1) { watchdog('php', '<pre>part_vogontvangst:' . print_r($part_vogontvangst, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-				if ($extdebug == 1) { watchdog('php', '<pre>part_vogdatum:' . print_r($part_vogdatum, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-				#if ($extdebug == 1) { watchdog('php', '<pre>diffsinceaanvraag:' . print_r($diffsinceaanvraag, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-				if ($extdebug == 1) { watchdog('php', '<pre>dagen_sinds_aanvraag:' . print_r($dayssinceaanvraag, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-				if ($extdebug == 1) { watchdog('php', '<pre>status_ontvangst:' . print_r($status_ontvangst, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-			}
-			// UPDATE ACTIVITY ONTVANGST STATUS N.A.V. DAYS SINCE...
-			#if ((in_array($vogaanvraag_activity_status, array("1", "4", "5", "8")) AND in_array($vogontvangst_activity_status, array("2"))) AND $part_vogingediend) {
-			if ($vogaanvraag_activity_id AND $datum_aanvraag AND $status_aanvraag) {
-  				$params_vog_activity_change_aanvraag = array(
-  					'id'					=> $vogaanvraag_activity_id,
-  					'activity_type_id'		=> "VOG aanvraag",
-  					'activity_date_time'	=> $datum_aanvraag,
- 					'subject' 				=> "VOG aanvraag ingediend",
-   					'status_id'				=> $status_aanvraag,
-  				);
-  				if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_change_aanvraag:' . print_r($params_vog_activity_change_aanvraag, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-				if ($extvog == 1)	{ $result = civicrm_api3('Activity', 'create', $params_vog_activity_change_aanvraag); }
-				#if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_change_aanvraag_result:' . print_r($result, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-			}
-			// UPDATE ACTIVITY ONTVANGST STATUS NAV DAYS SINCE...
-			#if ((in_array($vogontvangst_activity_status, array("1", "4", "5", "8")) AND in_array($vogaanvraag_activity_status, array("2"))) AND $part_vogdatum AND $vognodig != 'noggoed') {
-			if ($vogontvangst_activity_id AND $datum_ontvangst AND $status_ontvangst) {
-  				$params_vog_activity_change_ontvangst = array(
-  					'id'					=> $vogontvangst_activity_id,
-  					'activity_type_id'		=> "VOG ontvangst",
-  					'activity_date_time'	=> $datum_ontvangst,
-  					'subject' 				=> "VOG ontvangst bevestigd",
-  					'status_id'				=> $status_ontvangst,
-  				);
-  				if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_change_ontvangst:' . print_r($params_vog_activity_change_ontvangst, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-				if ($extvog == 1)	{ $result = civicrm_api3('Activity', 'create', $params_vog_activity_change_ontvangst); }
-				#if ($extdebug == 1) { watchdog('php', '<pre>params_vog_activity_change_ontvangst_result:' . print_r($result, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-			}
-			if ($extdebug == 1) { watchdog('php', '<pre>*** END EXTENSION VOG [groupID: '.$groupID.'] [op: '.$op.'] [kampleider: '.$displayname.'] ***</pre>', NULL, WATCHDOG_DEBUG); }
-		}
     	}
 	}
 }
