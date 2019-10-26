@@ -63,10 +63,10 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
 	$extdjcont 	= 1;
 	$extdjpart	= 1;
 	$exttag		= 1;
-	$extrel		= 1;
-	$extvog		= 1;
+	$extrel		= 0;
+	$extvog		= 0;
 	$extact		= 0;
-	$extref		= 1;
+	$extref		= 0;
 
 	if (!in_array($groupID, array("106", "139", "190"))) { // ALLEEN PART + EVENT PROFILES
 	#if (!in_array($groupID, array("139","190"))) { // ALLEEN PART PROFILES
@@ -125,9 +125,10 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
 		$eventypesleid 	= array(1, 101);									//	EVENT_TYPE_ID VAN HET LEIDING EVENT VAN DIT JAAR 	(+ TEST_LEID)
 		$vognodig 		= NULL;
 		$refnodig 		= NULL;
-		$referentie_ingevuld  = NULL;
-		$datum_drijf_ingevuld = NULL;
-		$drupal_name 	= NULL;
+		$part_refingevuld  		= NULL;
+		$rel_refingevuld  		= NULL;
+		$datum_drijf_ingevuld 	= NULL;
+		$drupal_name 			= NULL;
 
 		#####################################################################################################
 		# 1.1 VIND ALLE EVENTS LEIDING & DEELNEMERS VOOR DIT JAAR
@@ -199,31 +200,28 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
 		#if ($extdebug == 1) { watchdog('php', '<pre>kampids_all:' . print_r($kampids_all, true) . '</pre>', null, WATCHDOG_DEBUG); }
 
 		#####################################################################################################
-		# 1.2 GET PARTICIPANT INFO FOR ALL KAMPIDS
-    	if ($extdebug == 1) { watchdog('php', '<pre>### 1.2. GET PARTICIPANT INFO FOR ALL KAMPIDS [groupID: '.$groupID.'] ###</pre>', NULL, WATCHDOG_DEBUG); }
+		# 1.2 CHECK PARTICIPANT STATUS FOR ALL KAMPIDS
+    	if ($extdebug == 1) { watchdog('php', '<pre>### 1.2 CHECK PARTICIPANT STATUS [groupID: '.$groupID.'] ###</pre>', NULL, WATCHDOG_DEBUG); }
 		#####################################################################################################
 
-  		if (in_array($groupID, array("139", "190"))) {	// PART DEEL + PART LEID + PART LEID VOG + PART LEID REF
+    	# A. als partitipant wordt gewerkt dan zoek dan de participant info van dat event
+    	# B. indien participant die wordt bewerkt is gecancelled dan kijken of er een andere registratie is die niet gecancceled is
+    	# C. indien contact wordt geedit (en geen participant), dan kijken of er een actieve registratie in dit fiscal jaar is
+    	# D. indien dit allemaal neit het geval is, gewoon basic info ophalen voor het contact
+
+    	if (in_array($groupID, array("139", "190"))) {	// PART DEEL + PART LEID
+			if ($extdebug == 1) { watchdog('php', '<pre>ZOEK DE RELEVANTE VELDEN VOOR DEZE REGISTRATIE </pre>', NULL, WATCHDOG_DEBUG); }
     		$params_partinfo = [
     			'debug'			=> 1,
       			'sequential'	=> 1,
+      			'return' 		=> array("id","contact_id","first_name","event_id","participant_status_id", "participant_role_id", "custom_592", "custom_593", "custom_649","custom_567","custom_568","custom_56","custom_68","custom_599","custom_600","custom_959","custom_603","custom_602","custom_1004","custom_1003","custom_1020","custom_1021","custom_1018","custom_980","custom_707"),
       			'status_id'		=> array("Registered", "Deelgenomen", "Pending from pay later", "Pending from incomplete transaction", "On waitlist", "Pending from waitlist", "Awaiting approval", "Partially paid", "Pending refund", "Cancelled"),
+      			'id'			=> $entityID,
     		];
-    	}
-   		if (in_array($groupID, array("139"))) {					// PART DEEL
-      		$params_partinfo['return'] 		= array("id","contact_id","first_name","display_name","event_id","participant_status_id","custom_592","custom_567","custom_568","custom_1038","custom_376", "custom_73", "custom_74", "custom_647", "custom_474", "custom_663","custom_961","custom_593");
-			$params_partinfo['id'] 			= $entityID;
-   		}
-   		if (in_array($groupID, array("190"))) {	// PART LEID + PART LEID VOG + PART LEID REF
-			$params_partinfo['return'] 		= array("id","contact_id","first_name","display_name","job_title","event_id","participant_status_id","custom_592","custom_649","custom_567","custom_568","custom_56","custom_68","custom_599","custom_600","custom_959","custom_603","custom_602","custom_1004","custom_1003","custom_1020","custom_1021","custom_1018","custom_980","custom_707","custom_1038","custom_376", "custom_73", "custom_74", "custom_647", "custom_474", "custom_663","custom_961");
-			$params_partinfo['id'] 			= $entityID;
-   		}
-
-		if (in_array($groupID, array("139","190"))) {
-   			try{
-   				#if ($extdebug == 1) { watchdog('php', '<pre>params_partinfo:' . print_r($params_partinfo, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-  				$result = civicrm_api3('Participant', 'get', $params_partinfo);
-   				#if ($extdebug == 1) { watchdog('php', '<pre>params_partinfo_result:' . print_r($result, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+    		try{
+   				if ($extdebug == 1) { watchdog('php', '<pre>params_partinfo1:' . print_r($params_partinfo, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+  				$result_part = civicrm_api3('Participant', 'get', $params_partinfo);
+   				if ($extdebug == 1) { watchdog('php', '<pre>params_partinfo1_result:' . print_r($result_part, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
 			}
 			catch (CiviCRM_API3_Exception $e) {
    				// Handle error here.
@@ -232,148 +230,166 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
    				$errorData 		= $e->getExtraParams();
    				if ($extdebug == 1) { watchdog('php', '<pre>ERROR: errorMessage:' . print_r($errorMessage, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
 			}
-			if ($result['count'] == 0) {
+			#####################################################################################################
+			# BEKIJK NU OF ER INDERDAAD EEN GELDIG PARTICIPANT RECORD IS
+			#####################################################################################################
+			if ($result_part['count'] == 0) {
 				if ($extdebug == 1) { watchdog('php', '<pre>ERROR: GEEN PARTICIPANT INFO GEVONDEN:' . print_r($errorData, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
 			}
-			if ($result['count'] == 2) {
-				if ($extdebug == 1) { watchdog('php', '<pre>ERROR: TWEE PARTICIPANT INFO GEVONDEN:' . print_r($errorData, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); } // M61: hier juiste vd 2 bepalen
+			if ($result_part['count'] > 1) {
+				if ($extdebug == 1) { watchdog('php', '<pre>ERROR: MEER DAN 1 PARTICIPANT RECORDS GEVONDEN:' . print_r($errorData, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); } // M61: hier juiste vd 2 bepalen
 				return; //    if not, get out of here
 			}
-			if ($result['count'] == 1) {
-				$part_id 				= $result['values'][0]['id'];
-   				$part_eventid 			= $result['values'][0]['event_id'];
-   				$part_kamptypeid		= $result['values'][0]['custom_961'];
-   				$part_status_id			= $result['values'][0]['participant_status_id'];
-				$part_gegevensgechecked	= $result['values'][0]['custom_1038'];	// PART datum gegevens gechecked
-				$part_groepklas 		= $result['values'][0]['custom_593'];
-				if ($extdebug == 1) { watchdog('php', '<pre>part_id:'. print_r($part_id, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
-				if ($extdebug == 1) { watchdog('php', '<pre>part_eventid:'. print_r($part_eventid, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
-				if ($extdebug == 1) { watchdog('php', '<pre>part_kamptypeid:'. print_r($part_kamptypeid, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
-				if ($extdebug == 1) { watchdog('php', '<pre>part_status_id:'. print_r($part_status_id, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
-				if ($extdebug == 1) { watchdog('php', '<pre>part_gegevensgechecked:'. print_r($part_gegevensgechecked, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
-				if ($extdebug == 1) { watchdog('php', '<pre>part_groepklas:'. print_r($part_groepklas, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
-			}
-		}
-		# GET CONTACT INFO WHEN TABS ARE CHECKED INSTEAD OF PARTICIPANT INFO IS EDITED
-		if (in_array($groupID, array("103", "106"))) {	// TAB CV + TAB INTAKE
-			$params_contactinfo = [
-    			'debug'			=> 1,
-      			'sequential'	=> 1,
+    	}
+		#####################################################################################################
+		# INDIEN (DIT JAAR) GECANCELLED ZOEK OF ER EEN ANDERE GELDIGE REGISTRATIE IS VOOR DIT JAAR
+		#####################################################################################################
+		if (in_array($groupID, array("103", "106")) OR $part_status == 4) {	// TAB WERVING of DEELNAME CANCELLED
+   			$params_partinfo = [
+      			'sequential' 	=> 1,
+      			'return' 		=> array("id","contact_id","first_name","event_id","participant_status_id", "participant_role_id", "custom_592", "custom_593", "custom_649","custom_567","custom_568","custom_56","custom_68","custom_599","custom_600","custom_959","custom_603","custom_602","custom_1004","custom_1003","custom_1020","custom_1021","custom_1018","custom_980","custom_707"),
+      			'status_id' 	=> array("Registered","Deelgenomen","Pending from pay later","Pending from incomplete transaction","On waitlist","Pending from waitlist","Partially paid","Pending refund"),
+      			'event_id' 		=> array('IN' => $kampids_all),	// gebruik de gevonden event_id's van de kampen van dit jaar
+      			'start_date' 	=> ['>' => $fiscalyear_start],
+      			'end_date' 		=> ['>' => $fiscalyear_end],
     		];
-			$params_contactinfo['return'] 		= array("id","contact_id","first_name","display_name", "custom_1038","custom_376", "custom_73", "custom_74", "custom_647", "custom_474",  "custom_663");
-			$params_contactinfo['contact_id'] 	= $entityID;
-			#if ($extdebug == 1) { watchdog('php', '<pre>params_contactinfo:' . print_r($params_contactinfo, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-			$result = civicrm_api3('Contact', 'get', $params_contactinfo);
-			#if ($extdebug == 1) { watchdog('php', '<pre>params_contactinfo_result:' . print_r($result, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-		}
+    		if ($part_status == 4) {
+				if ($extdebug == 1) { watchdog('php', '<pre>PARTICIPANT STATUS: GECANCELLED. ZOEK ALSNOG EEN GELDIGE REGISTRATIE VOOR DIT JAAR</pre>', NULL, WATCHDOG_DEBUG); }
+				$params_partinfo['id'] 			= $entityID;
+			}
+			if (in_array($groupID, array("103", "106"))) {	// TAB CURICULUM + TAB WERVING
+				if ($extdebug == 1) { watchdog('php', '<pre>GEEN PARTICIPANT ID GEVONDEN. ZOEK ALSNOG EEN GELDIGE REGISTRATIE VOOR DIT JAAR</pre>', NULL, WATCHDOG_DEBUG); }
+				$params_partinfo['contact_id'] 	= $entityID;
+			}
+    		#if ($extdebug == 1) { watchdog('php', '<pre>params_partinfo2:' . print_r($params_partinfo, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+			$result_part = civicrm_api3('Participant', 'get', $params_partinfo);
+			if ($result_part['count'] == 1) {
+				if ($extdebug == 1) { watchdog('php', '<pre>(ALSNOG) PARTICIPANT INFO GEVONDEN!</pre>', NULL, WATCHDOG_DEBUG); }
+			}
+			if ($extdebug == 1) { watchdog('php', '<pre>params_partinfo2_result:' . print_r($result_part, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+    	}
 
-		$contact_id 			= $result['values'][0]['contact_id'];
-		$first_name				= $result['values'][0]['first_name'];
- 		$displayname 			= $result['values'][0]['display_name'];	// displayname van contact
- 		$drupalnaam				= $result['values'][0]['job_title'];
+   		#####################################################################################################
+		# GET CONTACT INFO WHEN TABS ARE CHECKED INSTEAD OF PARTICIPANT INFO IS EDITED
+		#####################################################################################################
+
+		$params_contactinfo = [
+   			'debug'			=> 1,
+   			'sequential'	=> 1,
+   		];
+		$params_contactinfo['return'] 		= array("id","contact_id","first_name","display_name","job_title","custom_1038","custom_376","custom_73","custom_74","custom_647","custom_474","custom_663");
+		$params_contactinfo['contact_id'] 	= $entityID;
+		#if ($extdebug == 1) { watchdog('php', '<pre>params_contactinfo:' . print_r($params_contactinfo, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+		$result_cont = civicrm_api3('Contact', 'get', $params_contactinfo);
+		#if ($extdebug == 1) { watchdog('php', '<pre>params_contactinfo_result:' . print_r($result, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+
+		#####################################################################################################
+		# 1.3 ASIGN RETREIVED VALUES TO VARIABLES
+    	if ($extdebug == 1) { watchdog('php', '<pre>### 1.3 ASIGN RETREIVED VALUES TO VARIABLES [groupID: '.$groupID.'] ###</pre>', NULL, WATCHDOG_DEBUG); }
+		#####################################################################################################
+
+		$contact_id 			= $result_cont['values'][0]['contact_id'];
+		$first_name				= $result_cont['values'][0]['first_name'];
+ 		$displayname 			= $result_cont['values'][0]['display_name'];	// displayname van contact
+ 		$drupalnaam				= $result_cont['values'][0]['job_title'];
  		if ($extdebug == 1) { watchdog('php', '<pre>contact_id:'. print_r($contact_id, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
 		if ($extdebug == 1) { watchdog('php', '<pre>first_name:' . print_r($first_name, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
 		if ($extdebug == 1) { watchdog('php', '<pre>displayname:'. print_r($displayname, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
 		if ($extdebug == 1) { watchdog('php', '<pre>drupalnaam:'. print_r($drupalnaam, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
 
-		if (empty($contact_id)) {
-			if ($extdebug == 1) { watchdog('php', '<pre>ERROR: CONTACT INFO LEEG > RETURN:' . print_r($errorData, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-			return; //    if not, get out of here
+		if ($result_part['count'] == 1) {
+   			$part_eventid 		= $result_part['values'][0]['event_id'];
+   			$part_kamptypeid	= $result_part['values'][0]['custom_961'];
+			$part_id 			= $result_part['values'][0]['id'];
+	   		$part_role_id		= $result_part['values'][0]['participant_role_id'];
+	   		$part_status_id		= $result_part['values'][0]['participant_status_id'];
+			$part_gegevensgechecked	= $result_part['values'][0]['custom_1038'];	// PART datum gegevens gechecked
+			if ($extdebug == 1) { watchdog('php', '<pre>part_eventid:'. print_r($part_eventid, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
+			if ($extdebug == 1) { watchdog('php', '<pre>part_kamptypeid:'. print_r($part_kamptypeid, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
+			if ($extdebug == 1) { watchdog('php', '<pre>part_id:'. print_r($part_id, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
+			if ($extdebug == 1) { watchdog('php', '<pre>part_role_id:'. print_r($part_role_id, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
+			if ($extdebug == 1) { watchdog('php', '<pre>part_status_id:'. print_r($part_status_id, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
+			if ($extdebug == 1) { watchdog('php', '<pre>part_gegevensgechecked:'. print_r($part_gegevensgechecked, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
+			
 		}
 
-		if (in_array($part_eventid, $kampidsdeel)) {
+		#if (in_array($part_eventid, $kampidsdeel)) {
+		if ($part_role_id == 7) { // ROLE_ID = DEELNEMER
 			$part_functie 			= 'deelnemer';
+			$part_groepklas 		= $result_part['values'][0]['custom_593'];
+			if ($extdebug == 1) { watchdog('php', '<pre>part_groepklas:'. print_r($part_groepklas, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
 		}
 
-		if (in_array($part_eventid, $kampidsleid)) { // INDIEN DIT JAAR MEE ALS LEIDING
-			$part_welkkampleid		= $result['values'][0]['custom_567'];	// WELK KAMP (PART_LEID)
-   			$part_functie 			= $result['values'][0]['custom_568'];
-	   		$vogrecent 				= $result['values'][0]['custom_56'];	// TAB DITJAAR
-   			$vogkenmerk 			= $result['values'][0]['custom_68'];	// TAB DITJAAR
-   			$part_vogverzocht 		= $result['values'][0]['custom_599'];
-			$part_vogingediend		= $result['values'][0]['custom_600'];
-			$part_vogontvangst		= $result['values'][0]['custom_959'];
-   			$part_vogdatum			= $result['values'][0]['custom_603'];
-   			$part_vogkenmerk 		= $result['values'][0]['custom_602'];
-   			$refrecent 				= $result['values'][0]['custom_1004'];	// TAB DITJAAR datum van de laatste referentie
-   			$refkenmerk 			= $result['values'][0]['custom_1003'];	// TAB DITJAAR naam van de laatste referentie
-   			$part_refdatum			= $result['values'][0]['custom_1020'];
-   			$part_refkenmerk		= $result['values'][0]['custom_1021'];
-			$referentie_ingevuld	= $result['values'][0]['custom_707'];	// PART datum feedback van referentie
-			$referentie_voornaam	= $result['values'][0]['custom_980'];	// PART voornaam van de referentie
+		#if (in_array($part_eventid, $kampidsleid)) { // INDIEN DIT JAAR MEE ALS LEIDING
+		if ($part_role_id == 6) { // ROLE_ID = LEIDING
+			$part_welkkampleid		= $result_part['values'][0]['custom_567'];	// WELK KAMP (PART_LEID)
+   			$part_functie 			= $result_part['values'][0]['custom_568'];
+	   		$vogrecent 				= $result_part['values'][0]['custom_56'];	// TAB DITJAAR
+   			$vogkenmerk 			= $result_part['values'][0]['custom_68'];	// TAB DITJAAR
+   			$part_vogverzocht 		= $result_part['values'][0]['custom_599'];
+			$part_vogingediend		= $result_part['values'][0]['custom_600'];
+			$part_vogontvangst		= $result_part['values'][0]['custom_959'];
+   			$part_vogdatum			= $result_part['values'][0]['custom_603'];
+   			$part_vogkenmerk 		= $result_part['values'][0]['custom_602'];
+   			$refrecent 				= $result_part['values'][0]['custom_1004'];	// TAB DITJAAR datum van de laatste referentie
+   			$refkenmerk 			= $result_part['values'][0]['custom_1003'];	// TAB DITJAAR naam van de laatste referentie
+   			$part_refdatum			= $result_part['values'][0]['custom_1020'];
+   			$part_refkenmerk		= $result_part['values'][0]['custom_1021'];
+			$part_refingevuld 		= $result_part['values'][0]['custom_707'];	// PART datum feedback van referentie
+			$part_refvoornaam		= $result_part['values'][0]['custom_980'];	// PART voornaam van de referentie
  			
 			if ($extdebug == 1) { watchdog('php', '<pre>part_welkkampleid:'. print_r($part_welkkampleid, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
 			if ($extdebug == 1) { watchdog('php', '<pre>part_functie:'. print_r($part_functie, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
-
 			#if ($extdebug == 1) { watchdog('php', '<pre>part_vogverzocht:'. print_r($part_vogverzocht, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
 			#if ($extdebug == 1) { watchdog('php', '<pre>part_vogingediend:'. print_r($part_vogingediend, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
 			#if ($extdebug == 1) { watchdog('php', '<pre>part_vogontvangst:'. print_r($part_vogontvangst, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
 			#if ($extdebug == 1) { watchdog('php', '<pre>part_vogdatum:'. print_r($part_vogdatum, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
-			#if ($extdebug == 1) { watchdog('php', '<pre>part_referentie_ingevuld:'. print_r($referentie_ingevuld, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
-			#if ($extdebug == 1) { watchdog('php', '<pre>part_referentie_voornaam:'. print_r($referentie_voornaam, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
-
-   			$datum_belangstelling 	= $result['values'][0]['custom_647'];
-			$datum_drijf_ingevuld	= $result['values'][0]['custom_474'];
-			$datum_drijf_gechecked	= $result['values'][0]['custom_663'];
-
-	   		if ($extdebug == 1) { watchdog('php', '<pre>datum_belangstelling:'. print_r($datum_belangstelling, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
-			if ($extdebug == 1) { watchdog('php', '<pre>datum_drijf_ingevuld:'. print_r($datum_drijf_ingevuld, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
-			if ($extdebug == 1) { watchdog('php', '<pre>datum_drijf_gechecked:'. print_r($datum_drijf_gechecked, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
-
-			#if ($extdebug == 1) { watchdog('php', '<pre>arraydeel 0:'. print_r($arraydeel, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
-			#if ($extdebug == 1) { watchdog('php', '<pre>arrayleid 0:'. print_r($arrayleid, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
-
-			if(isset($result['values'][0]['custom_592'][0]))	{ $part_ditjaar1stdeel 	= $result['values'][0]['custom_592'][0]; } else { $part_ditjaar1stdeel = ""; }
-			if(isset($result['values'][0]['custom_649'][0])) 	{ $part_ditjaar1stleid 	= $result['values'][0]['custom_649'][0]; } else { $part_ditjaar1stleid = ""; }
-			if ($extdebug == 1) { watchdog('php', '<pre>part_ditjaar1stdeel:'. print_r($part_ditjaar1stdeel, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
-			if ($extdebug == 1) { watchdog('php', '<pre>part_ditjaar1stleid:'. print_r($part_ditjaar1stleid, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
-
-			if ($datum_belangstelling AND empty($datum_drijf_ingevuld)) {
-				$datum_drijf_ingevuld = $datum_belangstelling;
-				if ($extdebug == 1) { watchdog('php', '<pre>datum_drijf_ingevuld_van_belangstelling:'. print_r($datum_drijfveren, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }	
-			}
-			if ($datum_drijf_gechecked AND empty($datum_drijf_ingevuld)) {
-				$datum_drijf_ingevuld = $datum_belangstelling;
-				if ($extdebug == 1) { watchdog('php', '<pre>datum_drijf_ingevuld_van_drijf_gechecked:'. print_r($datum_drijfveren, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }	
-			}	
-
-  			if (!in_array($part_eventid, $kampids_all)) {
-    			if ($extdebug == 1) { watchdog('php', '<pre>EXIT: NOT A PARTICIPANT OF CAMPS THIS YEAR</pre>', NULL, WATCHDOG_DEBUG); }
-  				#return; //    if not, get out of here
-			}
+			#if ($extdebug == 1) { watchdog('php', '<pre>part_referentie_ingevuld:'. print_r($part_refingevuld, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
+			#if ($extdebug == 1) { watchdog('php', '<pre>part_referentie_voornaam:'. print_r($part_refvoornaam, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
 		}
 
-		$arraydeel	 			= $result['values'][0]['custom_376'];	// welke jaren deel
-		$arrayleid	 			= $result['values'][0]['custom_73'];	// welke jaren leid
-		$hoevaakleid			= $result['values'][0]['custom_74'];	// hoe vaak leid
+		if(isset($result_part['values'][0]['custom_592'][0]))	{ $part_ditjaar1stdeel 	= $result_part['values'][0]['custom_592'][0]; } else { $part_ditjaar1stdeel = ""; }
+		if(isset($result_part['values'][0]['custom_649'][0])) 	{ $part_ditjaar1stleid 	= $result_part['values'][0]['custom_649'][0]; } else { $part_ditjaar1stleid = ""; }
+		if ($extdebug == 1) { watchdog('php', '<pre>part_ditjaar1stdeel:'. print_r($part_ditjaar1stdeel, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
+		if ($extdebug == 1) { watchdog('php', '<pre>part_ditjaar1stleid:'. print_r($part_ditjaar1stleid, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
 
-		if ($part_status_id == 4) { // M61: IF HUIDIGE EVENT HAS STATUS CANCELLED
-			#####################################################################################################
-			# 1.3 GET PARTICIPANT INFO VAN KAMPEN DIE WEL EEN POSITIEVE DEELNEMERSTATUS HEBBEN M61: mss beter sws alle statussen
-    		if ($extdebug == 1) { watchdog('php', '<pre>### 1.3. GET PARTICIPANT INFO VAN KAMPEN DIE WEL EEN POSITIEVE DEELNEMERSTATUS HEBBEN [groupID: '.$groupID.'] ###</pre>', NULL, WATCHDOG_DEBUG); }
-			#####################################################################################################
-   			$params_partinfoyes = [
-      			'sequential' 	=> 1,
-      			'return' 		=> array("id","contact_id","first_name","display_name","event_id","participant_status_id", "custom_592","custom_649","custom_567","custom_568","custom_56","custom_68","custom_599","custom_600","custom_959","custom_603","custom_602"),
-      			'status_id' 	=> array("Registered", "Deelgenomen", "Pending from pay later", "Pending from incomplete transaction", "On waitlist", "Pending from waitlist", "Partially paid", "Pending refund"),
-      			'contact_id' 	=> $contact_id,
-      			'event_id' 		=> array('IN' => $kampids_all),	// gebruik de gevonden event_id's van de kampen van dit jaar 
-      			// LET OP: mogelijk komen hier meerdere kampen als resultaat uit. Er moet dan een exception zijn om te bepalen wat we doen (bv. ene kamp geannuleerd, andere geregistreerd)
-      			// FEITELIJK gebeurt dat niet en zou het juist moeten. Zodat indien een geannulleerd event wordt geedit (maar er is ook een geregisiteerd event) op het CV toch dat jaar als meegegaan komt.
-      			// INDIEN STATUS_ID = 4 (geannuleerd) dan zou er een nieuwe query naar alle events van dit/dat jaar moeten komen, op zoek naar eentje wel met positieve status.
-    		];
-   			#if ($extdebug == 1) { watchdog('php', '<pre>params_partinfo:' . print_r($params_partinfoyes, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-  			$result = civicrm_api3('Participant', 'get', $params_partinfoyes);
-   			#if ($extdebug == 1) { watchdog('php', '<pre>params_partinfoyes_result:' . print_r($result, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+		$datum_belangstelling 	= $result_cont['values'][0]['custom_647'];
+		$datum_drijf_ingevuld	= $result_cont['values'][0]['custom_474'];
+		$datum_drijf_gechecked	= $result_cont['values'][0]['custom_663'];
 
-   			$part_eventid 		= $result['values'][0]['event_id'];
-			$part_id 			= $result['values'][0]['id'];
-	   		$part_status_id		= $result['values'][0]['participant_status_id'];
+   		if ($extdebug == 1) { watchdog('php', '<pre>datum_belangstelling:'. print_r($datum_belangstelling, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
+		if ($extdebug == 1) { watchdog('php', '<pre>datum_drijf_ingevuld:'. print_r($datum_drijf_ingevuld, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
+		if ($extdebug == 1) { watchdog('php', '<pre>datum_drijf_gechecked:'. print_r($datum_drijf_gechecked, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
 
-			if ($extdebug == 1) { watchdog('php', '<pre>new_part_eventid:'. print_r($part_eventid, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
-			if ($extdebug == 1) { watchdog('php', '<pre>new_part_id:'. print_r($part_id, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
-			if ($extdebug == 1) { watchdog('php', '<pre>new_part_status_id:'. print_r($part_status_id, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
+		if ($datum_belangstelling AND empty($datum_drijf_ingevuld)) {
+			$datum_drijf_ingevuld = $datum_belangstelling;
+			if ($extdebug == 1) { watchdog('php', '<pre>datum_drijf_ingevuld_van_belangstelling:'. print_r($datum_drijfveren, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }	
 		}
+		if ($datum_drijf_gechecked AND empty($datum_drijf_ingevuld)) {
+			$datum_drijf_ingevuld = $datum_belangstelling;
+			if ($extdebug == 1) { watchdog('php', '<pre>datum_drijf_ingevuld_van_drijf_gechecked:'. print_r($datum_drijfveren, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }	
+		}	
+
+		$arraydeel	 			= $result_cont['values'][0]['custom_376'];	// welke jaren deel
+		$arrayleid	 			= $result_cont['values'][0]['custom_73'];	// welke jaren leid
+		$hoevaakleid			= $result_cont['values'][0]['custom_74'];	// hoe vaak leid
+
+		#if ($extdebug == 1) { watchdog('php', '<pre>arraydeel 0:'. print_r($arraydeel, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
+		#if ($extdebug == 1) { watchdog('php', '<pre>arrayleid 0:'. print_r($arrayleid, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
+
+   		#####################################################################################################
+		# LET OP !!!! $contact_id hoort niet leeg te zijn
+		#####################################################################################################
+
+		if (empty($contact_id)) {
+			if ($extdebug == 1) { watchdog('php', '<pre>ERROR: CONTACT INFO LEEG > RETURN:' . print_r($errorData, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+			return; //    if not, get out of here
+		}
+		if (!in_array($part_eventid, $kampids_all)) {
+    		if ($extdebug == 1) { watchdog('php', '<pre>EXIT: NOT A PARTICIPANT OF CAMPS THIS YEAR</pre>', NULL, WATCHDOG_DEBUG); }
+  			#return; //    if not, get out of here
+		}
+
 		#####################################################################################################
 		# 1.4 CHECK OF DEZE PERSOON DIT JAAR MEEGAAT ALS DEELNEMER OF LEIDING
     	if ($extdebug == 1) { watchdog('php', '<pre>### 1.4. CHECK OF '.$displayname.' DIT JAAR MEEGAAT ALS DEELNEMER OF LEIDING [groupID: '.$groupID.'] ###</pre>', NULL, WATCHDOG_DEBUG); }
@@ -433,7 +449,7 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
 		#####################################################################################################
 		# 1.6 RETRIEVE DRUPAL UID, LOGINNAME & EMAIL, 
 		#####################################################################################################
-   		if (in_array($groupID, array("139", "140", "165", "190")) AND !empty($drupalnaam)) {	// PART DEEL + PART LEID + PART LEID VOG + PART LEID REF
+   		if (in_array($groupID, array("103", "106", "139", "190")) AND !empty($drupalnaam)) {	// PART DEEL + PART LEID + PART LEID VOG + PART LEID REF
    		#if ($ditjaarleidyes == 1 OR $ditjaarleidmss == 1) {	// PART DEEL + PART LEID + PART REF EN INDIEN DIT JAAR MEE ALS LEIDING
 	   		if ($extdebug == 1) { watchdog('php', '<pre>### 1.6 RETRIEVE DRUPAL UID, LOGINNAME & EMAIL [part_eventid: '.$part_eventid.'] ###</pre>', NULL, WATCHDOG_DEBUG); }
 			$params_drupaluser = [
@@ -458,20 +474,24 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
   		}
 
 		#####################################################################################################
-		# 1.7 RETRIEVE THE EVENT TYPE ID OF THE EVENT (M61: waarom staat dit er eigenlijk in?)
+		# 1.7 RETRIEVE THE EVENT TYPE ID OF THE EVENT (M61: waarom staat dit er eigenlijk in?) > IGV LEIDING DAN ZAL EVENT_TYPE_ID 1 ZIJN & EVENT_ID DAT VAN LEIDING EVENT
    		if ($extdebug == 1) { watchdog('php', '<pre>### 1.7 RETRIEVE THE EVENT TYPE ID OF THE EVENT [part_eventid: '.$part_eventid.'] ###</pre>', NULL, WATCHDOG_DEBUG); }
 		#####################################################################################################
 		if (in_array($part_eventtypeid, $eventypesdeel) OR in_array($part_eventtypeid, $eventypesleid)) {
 			#$part_eventtypeid 	= NULL;
     		if ($extdebug == 1) { watchdog('php', '<pre>part_eventtypeid (overwrite):' . print_r($part_eventtypeid, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
     	} else {
+	   		if ($extdebug == 1) { watchdog('php', '<pre>part_eventtypeid (oldtypeid):' . print_r($part_eventtypeid, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+	   		if ($extdebug == 1) { watchdog('php', '<pre>part_eventtypeid (typesdeel):' . print_r($eventypesdeel, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+	   		if ($extdebug == 1) { watchdog('php', '<pre>part_eventtypeid (typesleid):' . print_r($eventypesleid, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
    			$result = civicrm_api3('Event', 'get', array(
     			'sequential' => 1,
       			'return' => array("event_type_id"),
 				'event_id' => $part_eventid, 			// eventid of specific kamp
     		));
     		$part_eventtypeid 	= $result['values'][0]['event_type_id'];
-    		if ($extdebug == 1) { watchdog('php', '<pre>part_eventtypeid (newtypeid):' . print_r($part_eventtypeid, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+    		if ($extdebug == 1) { watchdog('php', '<pre>part_eventid:' . print_r($part_eventid, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+	   		if ($extdebug == 1) { watchdog('php', '<pre>part_eventtypeid (newtypeid):' . print_r($part_eventtypeid, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
     	}
     	if ($extdebug == 1) { watchdog('php', '<pre>part_eventid:' . print_r($part_eventid, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
     	###################################################################################################
@@ -490,30 +510,30 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
     	if ($extdebug == 1) { watchdog('php', '<pre>### 1.8. GET EVENT INFO TO RETREIVE HOOFDLEIDING [part_eventid: '.$part_eventid.'] ###</pre>', NULL, WATCHDOG_DEBUG); }
 		#####################################################################################################
     	if (($extdjpart == 1 OR $extdjcont == 1 OR $extvog == 1) AND ($ditjaardeelyes == 1 OR $ditjaardeelmss == 1 OR $ditjaarleidyes == 1)) {
-  			if (in_array($part_eventtypeid, $eventypesdeel)) {		// EVENTTYPE = DEEL (afkorting kamp staat in initial_amount_label)
-    			$result = civicrm_api3('Event', 'get', array(
-      				'sequential'	=> 1,
-      				'return'		=> array("id","start_date","custom_440","custom_681","custom_682","custom_917","custom_1042","event_type_id"),
-      				'event_type_id' => array('IN' => $eventypesdeel),
-					'id'			=> $part_eventid, 				// eventid of specific kamp
-    			));
-   				$event_kamp_kort	= $result['values'][0]['custom_917'];
-    			if ($extdebug == 1) { watchdog('php', '<pre>eventkenmerken_result (deel):' . print_r($result, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-    		}
-  			if (in_array($part_eventtypeid, $eventypesleid)) {		// EVENTTYPE = LEID (zoek kamp waar leiding zich voor opgaf)
-    			$result = civicrm_api3('Event', 'get', array(
-      				'sequential'	=> 1,
-      				'return'		=> array("id","start_date", "custom_440","custom_681","custom_682","custom_1042","event_type_id"),
-					'id'			=> array('IN' => $kampidsdeel),	// gebruik de gevonden event_id's van de kampen van dit jaar
-					'event_type_id' => array('IN' => $eventypesdeel),
-					'custom_917'	=> $part_welkkampleid,
-    			));
-    			$event_kamp_kort	= $part_welkkampleid;
-    			if ($extdebug == 1) { watchdog('php', '<pre>eventkenmerken_result (leid):' . print_r($result, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-    		}
+			$params_event = [
+				'sequential'	=> 1,
+   				'return'		=> array("id","start_date", "custom_440","custom_681","custom_682","custom_917", "custom_1042","event_type_id"),
+				'id'			=> array('IN' => $kampidsdeel),			// gebruik de gevonden event_id's van de kampen van dit jaar
+				'event_type_id' => array('IN' => $eventypesdeel),
+   			];
+   			if (in_array($part_eventtypeid, $eventypesdeel)) {			// EVENTTYPE = DEEL (afkorting kamp staat in initial_amount_label)
+   				$params_event['id'] 			= $part_eventid;		// eventid of specific kamp		
+   			}
+  			if (in_array($part_eventtypeid, $eventypesleid)) {			// EVENTTYPE = LEID (zoek kamp waar leiding zich voor opgaf)
+  				$params_event['custom_917'] 	= $part_welkkampleid;	// eventid of specific kamp		
+  			}
+			if ($extdebug == 1) { watchdog('php', '<pre>params_event:' . print_r($params_event, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+			$result = civicrm_api3('Event', 'get', $params_event);
+			if ($extdebug == 1) { watchdog('php', '<pre>params_cv EXECUTED [groupID: '.$groupID.']</pre>', NULL, WATCHDOG_DEBUG); }
+			#if ($extdebug == 1) { watchdog('php', '<pre>params_event_result:' . print_r($result, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+
+			$event_kamp_kort		= $result['values'][0]['custom_917'];
+   			if ($part_welkkampleid) {
+   				$event_kamp_kort	= $part_welkkampleid;
+   			}
     		$event_id 				= $result['values'][0]['id'];
-    		$event_type_name		= $result['values'][0]['custom_440'];
     		$event_type_id 			= $result['values'][0]['event_type_id'];
+    		$event_type_name		= $result['values'][0]['custom_440'];
 
 			$event_startdate 		= $result['values'][0]['start_date'];
 			$event_hoofdleiding1_id	= $result['values'][0]['custom_681_id'];
@@ -523,12 +543,12 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
 			$event_hoofdleiding2 	= $result['values'][0]['custom_682'];
 			$event_hoofdleiding3 	= $result['values'][0]['custom_1042'];
 
-   			if ($extdebug == 1) { watchdog('php', '<pre>$event_id:' . print_r($event_id, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-   			if ($extdebug == 1) { watchdog('php', '<pre>$event_type_id:' . print_r($event_type_id, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-			#if ($extdebug == 1) { watchdog('php', '<pre>eventhoofdleiding:' . print_r($result, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+   			if ($extdebug == 1) { watchdog('php', '<pre>event_id:' . print_r($event_id, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+   			if ($extdebug == 1) { watchdog('php', '<pre>event_type_id:' . print_r($event_type_id, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+   			if ($extdebug == 1) { watchdog('php', '<pre>event_type_name:' . print_r($event_type_name, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+   			if ($extdebug == 1) { watchdog('php', '<pre>event_kamp_kort:' . print_r($event_kamp_kort, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
 
 			// HOOFDLEIDING 1
-    		//if (isset($result['values'][0]['custom_681_id']) AND is_int($event_hoofdleiding1_id))	{
  	 		if (isset($event_hoofdleiding1_id))	{
 				#if ($extdebug == 1) { watchdog('php', '<pre>$event_hoofdleiding1_id:' . print_r($event_hoofdleiding1_id, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
     			$result = civicrm_api3('Contact', 'get', array(
@@ -790,10 +810,12 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
 
     		// poging om totaal aantal keren mee als deelnemer te berekenen op basis van event registraties
 			$params_countpart_deel = [
-				'status_id'  => array("Registered", "Deelgenomen", "Pending from pay later", "Pending from incomplete transaction", "Partially paid", "Pending refund"),
-      			'role_id' 	 => "Deelnemer",
-      			'contact_id' => $contact_id,
-      			'fee_amount' => ['>' => 1],
+				'status_id'		=> array("Registered", "Deelgenomen", "Pending from pay later", "Pending from incomplete transaction", "Partially paid", "Pending refund"),
+      			'role_id'		=> "Deelnemer",
+      			'contact_id'	=> $contact_id,
+      			'fee_amount'	=> ['>' => 1],
+      			#'custom_992' 	=> ["kinderkamp", "tienerkamp", "brugkamp", "jeugdkamp", "topkamp"],
+      			#'event_type_id' => array('IN' => $eventypesdeel), (cannot be combined with participant, this is an event field)
 			];
 			#if ($extdebug == 1) { watchdog('php', '<pre>params_countpart_deel:' . print_r($params_countpart_deel, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
 			$kereneventdeel = civicrm_api3('Participant', 'getcount', $params_countpart_deel);
@@ -862,49 +884,70 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
 		if ($extdjcont == 1) {
 			if ($extdebug == 1) { watchdog('php', '<pre>### 1.12 UPDATE PARAMS_CONTACT MET EVENT INFO [groupID: '.$groupID.'] ###</pre>', NULL, WATCHDOG_DEBUG); }
 
-	    	$params_contact = [ // MAAK DITJAAR velden leeg als dat van toepassing is
-				'contact_type' => 'Individual',
-	   			'id'		   => $contact_id,
-				'first_name'   => $first_name,
-				'job_title'    => $drupal_name,
-      			'custom_474'   => $datum_drijf_ingevuld,
-      			'custom_865'   => "",
-      			'custom_900'   => "", 
-      			'custom_901'   => "",
-      			'custom_993'   => "",
-      			'custom_994'   => "",
-      			'custom_995'   => "",
-      			'custom_938'   => "",
-      			'custom_939'   => "",
-      			'custom_951'   => "",
-      			'custom_952'   => "",
-      			'custom_996'   => "",
-      			'custom_997'   => "",
-      			'custom_1030'  => $entityID,
+	    	$params_contact = [ 	// MAAK DITJAAR velden leeg als dat van toepassing is
+	    	  	'debug'			=> 1,
+  				'sequential'	=> 0,
+  				'first_name'   	=> $first_name,
+				'contact_type' 	=> 'Individual',
+	   			'id'		   	=> $contact_id,
+				#'job_title'    => $drupal_name,
+      			#'custom_474'   => $datum_drijf_ingevuld,
+      			/*
+      			'custom_865'   	=> "",
+      			'custom_900'   	=> "", 
+      			'custom_901'	=> "",
+      			'custom_993'   	=> "",
+      			'custom_994'   	=> "",
+      			'custom_995'   	=> "",
+      			'custom_938'   	=> "",
+      			'custom_939'   	=> "",
+      			'custom_951'   	=> "",
+      			'custom_952'   	=> "",
+      			'custom_996'   	=> "",
+      			'custom_997'   	=> "",
+      			*/
+      			#'custom_1030'  	=> $entityID,
     		];
 
     		if ($ditjaardeelyes == 1 OR $ditjaarleidyes == 1 OR $ditjaardeelmss == 1 OR $ditjaarleidmss == 1) {
-    			$params_contact['custom_865'] 	= $part_functie;
-    			$params_contact['custom_900'] 	= $welkkamplang;
-    			$params_contact['custom_901'] 	= $welkkampkort;
-    			$params_contact['custom_1048'] 	= $welkeweeknr;
-			}
-    		if ($ditjaardeelyes == 1 OR $ditjaarleidyes == 1) {
     			$params_contact['custom_993'] 	= $event_type_name;
     			$params_contact['custom_994'] 	= $event_type_id;
     			$params_contact['custom_995'] 	= $event_id;
+			}
+
+    		if ($ditjaardeelyes == 1 OR $ditjaarleidyes == 1) {
+     			$params_contact['custom_865'] 	= $part_functie;
+    			$params_contact['custom_900'] 	= $welkkamplang;
+    			$params_contact['custom_901'] 	= $welkkampkort;
+    			$params_contact['custom_1048'] 	= $welkeweeknr;
     			$params_contact['custom_938'] 	= $event_hoofdleiding1_displname;
     			$params_contact['custom_939'] 	= $event_hoofdleiding2_displname;
     			$params_contact['custom_1043'] 	= $event_hoofdleiding3_displname;
     			$params_contact['custom_951'] 	= $event_hoofdleiding1_firstname;
     			$params_contact['custom_952'] 	= $event_hoofdleiding2_firstname;
     			$params_contact['custom_1044'] 	= $event_hoofdleiding3_firstname;
-    			$params_contact['custom_996'] 	= $eerstexdeel;
-    			$params_contact['custom_997'] 	= $eerstexleid;
-    			$params_contact['custom_1051'] 	= $part_groepklas;
+    			#$params_contact['custom_996'] 	= $eerstexdeel;
+    			#$params_contact['custom_997'] 	= $eerstexleid;
+    			#$params_contact['custom_1051'] = $part_groepklas;
 			}
 
-			$results = civicrm_api4('Contact', 'update', [
+  			if ($extdebug == 1) { watchdog('php', '<pre>params_contact:' . print_r($params_contact, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+			$result = civicrm_api3('Contact', 'create', $params_contact);
+			if ($extdebug == 1) { watchdog('php', '<pre>params_contact EXECUTED [groupID: '.$groupID.']</pre>', NULL, WATCHDOG_DEBUG); }
+			if ($extdebug == 1) { watchdog('php', '<pre>params_contact RESULT:' . print_r($result, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+/*
+			$result = civicrm_api3('Contact', 'create', [
+      			'debug'			=> 1,
+      			'sequential'	=> 1,
+      			'contact_type'	=> "Individual",
+      			'id'			=> $contact_id,
+      			'custom_994'	=> $event_type_id,
+      			'custom_995'	=> $event_id,
+    		]);
+    		if ($extdebug == 1) { watchdog('php', '<pre>params_contact RESULT 2:' . print_r($result, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+*/
+    		/*
+    		$results = civicrm_api5('Contact', 'update', [
   				'where' => [
     				['id', '=', $contact_id],
   				],
@@ -912,7 +955,7 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
     				'DITJAAR.DITJAAR_welkkamp_id' 	=> $event_id, 
     				'DITJAAR.DITJAAR_kamptype_id' 	=> $event_type_id,
     				'DITJAAR.DITJAAR_kamptype_naam' => $event_type_name,
-    				#'DITJAAR.DITJAAR_welkkamp_lang' => $welkkamplang,
+    				'DITJAAR.DITJAAR_welkkamp_lang' => $welkkamplang,
     				#'DITJAAR.DITJAAR_welkkamp_kort' => $welkkampkort,
     				'DITJAAR.DITJAAR_functie' 		=> $part_functie,
 					'DITJAAR.DITJAAR_hoofd_1_DN' 	=> $event_hoofdleiding1_displname, 
@@ -924,11 +967,19 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
   				],
   				'checkPermissions' => false,
 			]);
-
-  			if ($extdebug == 1) { watchdog('php', '<pre>params_contact:' . print_r($params_contact, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-			#$result = civicrm_api3('Contact', 'create', $params_contact);
-			if ($extdebug == 1) { watchdog('php', '<pre>params_contact EXECUTED [groupID: '.$groupID.']</pre>', NULL, WATCHDOG_DEBUG); }
-			if ($extdebug == 1) { watchdog('php', '<pre>params_contact RESULT:' . print_r($result, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+			*/
+/*
+			$results = civicrm_api('Contact', 'update', [
+  				'where' => [
+    				['id', '=', $contact_id],
+  				],
+  				'values' => [
+    				'DITJAAR.DITJAAR_kamptype_id'	=> $event_type_id,
+    				'DITJAAR.DITJAAR_welkkamp_lang'	=> $welkkamplang,
+  				],
+  				'checkPermissions' => false,
+			]);
+*/
 		}
 		#####################################################################################################
 		# 1.13 UPDATE PARAMS_PARTICIPANT MET EVENT INFO
@@ -958,10 +1009,10 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
       			'custom_954'   => $event_hoofdleiding2_firstname,
       			'custom_1047'  => $event_hoofdleiding3_firstname,
     		];
-   			if ($extdebug == 1) { watchdog('php', '<pre>params_participant:' . print_r($params_participant, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+   			#if ($extdebug == 1) { watchdog('php', '<pre>params_participant:' . print_r($params_participant, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
 			$result = civicrm_api3('Participant', 'create', $params_participant);
 			if ($extdebug == 1) { watchdog('php', '<pre>params_participant EXECUTED [groupID: '.$groupID.']</pre>', NULL, WATCHDOG_DEBUG); }
-			if ($extdebug == 1) { watchdog('php', '<pre>params_participant RESULT:' . print_r($result, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+			#if ($extdebug == 1) { watchdog('php', '<pre>params_participant RESULT:' . print_r($result, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
 		}
 		#####################################################################################################
 		# 1.14 UPDATE PARAMS_CV MET CV INFO
@@ -992,7 +1043,7 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
       			'custom_1112'   => $eventverschilleid,
 
 				// t.b.v. dummybedrag t.b.v. smarty vergelijking 
-				'custom_1010'  => "&euro; 0,00",
+				#'custom_1010'  => "&euro; 0,00", // niet gebruiken hier omdat er anders een update loop kan ontstaan
 				'custom_1039'  => $part_gegevensgechecked,
     		];
     		if ( (isset($welkedeel) AND $hoevaakdeel > 0) OR (!isset($welkedeel) AND $hoevaakdeel == 0) )	{ 	// voeg welkedeel alleen toe als het niet leeg is
@@ -1098,7 +1149,8 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
 		// ************************************************************************************************************
 		// 2. EXTENTION VOG/REF
 		// ************************************************************************************************************
-   		if ($extvog == 1 AND (in_array($groupID, array("190", "106")))) {	// PART LEID & TAB INTAKE EN INDIEN DIT JAAR MEE ALS LEIDING
+   		#if ($extvog == 1 AND (in_array($groupID, array("190", "106")))) {	// PART LEID & TAB INTAKE EN INDIEN DIT JAAR MEE ALS LEIDING
+   		if ($extvog == 1 AND (in_array($groupID, array("190")))) {	// PART LEID
    			if (empty($contact_id)) { // GA ALLEEN DOOR ALS CONTACT ID NIET LEEG IS
 				if ($extdebug == 1) { watchdog('php', '<pre>--- SKIP EXTENSION VOG-REF (empty contact_id) [groupID: '.$groupID.'] [op: '.$op.']---</pre>', null, WATCHDOG_DEBUG); }
 				return; //   if not, get out of here
@@ -1119,8 +1171,8 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
 		if ($extdebug == 1) { watchdog('php', '<pre>.part_vogingediend:'. print_r($part_vogingediend, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
 		if ($extdebug == 1) { watchdog('php', '<pre>.part_vogontvangst:'. print_r($part_vogontvangst, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
 		if ($extdebug == 1) { watchdog('php', '<pre>.part_vogdatum:'. print_r($part_vogdatum, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
-		if ($extdebug == 1) { watchdog('php', '<pre>.part_referentie_ingevuld:'. print_r($referentie_ingevuld, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
-		if ($extdebug == 1) { watchdog('php', '<pre>.part_referentie_voornaam:'. print_r($referentie_voornaam, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
+		if ($extdebug == 1) { watchdog('php', '<pre>.part_referentie_ingevuld:'. print_r($part_refingevuld, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
+		if ($extdebug == 1) { watchdog('php', '<pre>.part_referentie_voornaam:'. print_r($part_refvoornaam, TRUE) .'</pre>', NULL, WATCHDOG_DEBUG); }
 
 			// ************************************************************************************************************
 			// 2.1a BEPAAL OF DE VOG NOG GOED IS, HET DE EERSTE KEER IS, OF ER OPNIEUW EEN VOG MOET WORDEN AANGEVRAAGD 
@@ -1219,8 +1271,8 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
 					#if ($extdebug == 1) { watchdog('php', '<pre>params_referentie:' . print_r($params_referentie, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
     				$result = civicrm_api3('Relationship', 'getvalue', $params_referentie);
     				#if ($extdebug == 1) { watchdog('php', '<pre>params_referentie_result:' . print_r($result, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
-	    			$referentie_ingevuld = $result;
-    				if ($extdebug == 1) { watchdog('php', '<pre>relatie_referentie_ingevuld:' . print_r($referentie_ingevuld, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
+	    			$rel_refingevuld = $result;
+    				if ($extdebug == 1) { watchdog('php', '<pre>relatie_referentie_ingevuld:' . print_r($rel_refingevuld, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
   				}
   				catch (CiviCRM_API3_Exception $e) {
     				// Handle error here.
@@ -1263,9 +1315,9 @@ function curriculum_civicrm_custom($op, $groupID, $entityID, &$params) {
 					$params_intake_tab['custom_56'] = $vogrecent;
 					$params_intake_tab['custom_68'] = $vogkenmerk;
 				}
-   				if ($referentie_ingevuld AND strtotime($referentie_ingevuld) >= strtotime($fiscalyear_start)) {
-					$params_intake_tab['custom_1004'] = $referentie_ingevuld;
-					$params_intake_tab['custom_1003'] = $referentie_voornaam;
+   				if ($part_refingevuld AND strtotime($part_refingevuld) >= strtotime($fiscalyear_start)) {
+					$params_intake_tab['custom_1004'] = $part_refingevuld;
+					$params_intake_tab['custom_1003'] = $part_refvoornaam;
 				}
    				if ($extdebug == 1) { watchdog('php', '<pre>params_intake_tab:' . print_r($params_intake_tab, TRUE) . '</pre>', NULL, WATCHDOG_DEBUG); }
     			if ($groupID == 190) { 	// UPDATE TAB (INTAKE) BIJ EDIT VAN PART LEID_VOG (indien er een recente vog datum is)
