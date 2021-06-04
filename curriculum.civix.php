@@ -118,7 +118,7 @@ function _curriculum_civix_find_files($dir, $pattern) {
 	}
 
 	$todos = array($dir);
-	$result = array();
+	$result = [];
 	while (!empty($todos)) {
 		$subdir = array_shift($todos);
 		foreach (_curriculum_civix_glob("$subdir/$pattern") as $match) {
@@ -162,7 +162,7 @@ function _curriculum_civix_civicrm_managed(&$entities) {
  *
  * The documentation for glob() says, "On some systems it is impossible to
  * distinguish between empty match and an error." Anecdotally, the return
- * result for an empty match is sometimes array() and sometimes FALSE.
+ * result for an empty match is sometimes [] and sometimes FALSE.
  * This wrapper provides consistency.
  *
  * @see http://php.net/glob
@@ -171,7 +171,7 @@ function _curriculum_civix_civicrm_managed(&$entities) {
  */
 function _curriculum_civix_glob($pattern) {
 	$result = glob($pattern);
-	return is_array($result) ? $result : array();
+	return is_array($result) ? $result : [];
 }
 
 /**
@@ -209,7 +209,7 @@ function _curriculum_civix_insert_navigation_menu(&$menu, $path, $item, $parentI
 		foreach ($menu as $key => &$entry) {
 			if ($entry['attributes']['name'] == $first) {
 				if (!$entry['child']) {
-					$entry['child'] = array();
+					$entry['child'] = [];
 				}
 
 				$found = _curriculum_civix_insert_navigation_menu($entry['child'], implode('/', $path), $item, $key);
