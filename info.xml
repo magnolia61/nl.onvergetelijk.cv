@@ -1,18 +1,38 @@
 <?xml version="1.0"?>
 <extension key="nl.onvergetelijk.cv" type="module">
-  <file>curriculum</file>
-  <name>Onvergetelijke Zomerkampen - CV</name>
-  <description>Deze extensie berekent het aantal jaar dat iemand mee is geweest als leiding of deelnemer</description>
-  <license>GNU AGPL</license>
+  <file>cv</file>
+  <name>nl.onvergetelijk.cv</name>
+  <description>Calculation of curriculum of participants</description>
+  <license>AGPL-3.0</license>
   <maintainer>
     <author>Richard van Oosterhout</author>
-    <email>info@onvergetelijk.nl</email>
+    <email>webteam@onvergetelijk.nl</email>
   </maintainer>
-  <releaseDate>2016-01-01</releaseDate>
-  <version>0.1</version>
+  <urls>
+    <url desc="Main Extension Page">https://www.onvergetelijk.nl</url>
+    <url desc="Documentation">https://www.onvergetelijk.nl</url>
+    <url desc="Support">https://www.onvergetelijk.nl</url>
+    <url desc="Licensing">https://www.gnu.org/licenses/agpl-3.0.html</url>
+  </urls>
+  <releaseDate>2025-01-01</releaseDate>
+  <version>1.0</version>
   <develStage>beta</develStage>
   <compatibility>
-    <ver>4.7</ver>
+    <ver>5.81</ver>
   </compatibility>
-  <comments>This module extension is to Stichting Onvergetelijke Zomerkampen</comments>
+  <comments>Calculation of curriculum of participants</comments>
+  <classloader>
+    <psr0 prefix="CRM_" path="."/>
+    <psr4 prefix="Civi\" path="Civi"/>
+  </classloader>
+  <civix>
+    <namespace>CRM/Cv</namespace>
+    <format>23.02.1</format>
+    <angularModule>crmcv</angularModule>
+  </civix>
+  <mixins>
+    <mixin>mgd-php@1.0.0</mixin>
+    <mixin>setting-php@1.0.0</mixin>
+    <mixin>smarty-v2@1.0.1</mixin>
+  </mixins>
 </extension>

@@ -1,0 +1,1255 @@
+<div>{assign var="M61HEAD" value="START"}
+
+{assign var="voornaam"  		value=""}
+{assign var="inlognaam" 		value=""}
+{assign var="geslacht"  		value=""}
+
+{assign var="contact_id"  		value=""}
+
+{assign var="direct_cid"  		value=""}
+{assign var="direct_pid"  		value=""}
+{assign var="direct_eid"  		value=""}
+{assign var="direct_bid"  		value=""}
+
+{assign var="part_cid"  		value=""}
+{assign var="part_pid"  		value=""}
+{assign var="part_eid"  		value=""}
+{assign var="part_bid"  		value=""}
+
+{assign var="jaar_cid"  		value=""}
+{assign var="jaar_pid"  		value=""}
+{assign var="jaar_eid"  		value=""}
+{assign var="jaar_bid"  		value=""}
+
+{assign var="user_cid"  		value=""}
+{assign var="user_pid"  		value=""}
+{assign var="user_eid"  		value=""}
+{assign var="user_bid"  		value=""}
+
+{assign var="user_kampnaam"  	value=""}
+{assign var="user_kampkort"  	value=""}
+{assign var="user_kampkortlow"  value=""}
+{assign var="user_kampkortcap"  value=""}
+
+{assign var="user_kampstart"  	value=""}
+{assign var="user_kampeinde"  	value=""}
+{assign var="user_kamprol"  	value=""}
+{assign var="user_kamptype"  	value=""}
+
+{assign var="user_school"  		value=""}
+{assign var="user_leeftijd"  	value=""}
+{assign var="user_voorkeur"  	value=""}
+
+{assign var="hldn1"  			value=""}
+{assign var="hldn2"  			value=""}
+{assign var="hldn3"  			value=""}
+
+{assign var="part_school"  		value=""}
+{assign var="part_leeftijd"  	value=""}
+{assign var="part_voorkeur"  	value=""}
+{assign var="jaar_school"  		value=""}
+{assign var="jaar_leeftijd"  	value=""}
+{assign var="jaar_voorkeur"  	value=""}
+{assign var="user_school"  		value=""}
+{assign var="user_leeftijd"  	value=""}
+{assign var="user_voorkeur"  	value=""}
+
+{assign var="direct_bedrag"		value=""}
+{assign var="direct_betaald"  	value=""}
+{assign var="direct_balans" 	value=""}
+
+{assign var="user_bedrag"  		value=""}
+{assign var="user_betaald"  	value=""}
+{assign var="user_balans"  		value=""}
+{assign var="resterendbedrag"   value=""}
+
+{assign var="geld_regeling" 	value=""}
+{assign var="part_regeling"  	value=""}
+{assign var="jaar_regeling"  	value=""}
+{assign var="user_regeling"  	value=""}
+
+{assign var="part_nawcheck"  	value=""}
+{assign var="part_biocheck"  	value=""}
+{assign var="part_reffeedback" 	value=""}
+{assign var="part_vogrecent"  	value=""}
+
+{assign var="user_nawnodig"  	value=""}
+{assign var="user_bionodig"  	value=""}
+{assign var="user_refnodig"  	value=""}
+{assign var="user_vognodig"  	value=""}
+
+{assign var="user_nawstatus"  	value=""}
+{assign var="user_biostatus"  	value=""}
+{assign var="user_refstatus"  	value=""}
+{assign var="user_vogstatus"  	value=""}
+
+{assign var="issuesgedrag"  	value=""}
+
+{assign var="criterialeeftijd"  value=""}
+{assign var="criteriaschool"  	value=""}
+{assign var="criteriaindicatie" value=""}
+{assign var="criteriaoordeel"  	value=""}
+
+{assign var="user_welkomvideo"  value=""}
+{assign var="user_slotvideo"  	value=""}
+
+{assign var="part_thema_naam"	value=""}
+{assign var="part_thema_info"	value=""}
+{assign var="jaar_thema_naam" 	value=""}
+{assign var="jaar_thema_info"	value=""}
+{assign var="user_thema_naam" 	value=""}
+{assign var="user_thema_info"	value=""}
+
+{assign var="part_goeddoel_naam" value=""}
+{assign var="part_goeddoel_info" value=""}
+{assign var="part_goeddoel_link" value=""}
+{assign var="jaar_goeddoel_naam" value=""}
+{assign var="jaar_goeddoel_info" value=""}
+{assign var="jaar_goeddoel_link" value=""}
+{assign var="user_goeddoel_naam" value=""}
+{assign var="user_goeddoel_info" value=""}
+{assign var="user_goeddoel_link" value=""}
+
+{assign var="part_extrabagage"	value=""}
+{assign var="part_playlist"		value=""}
+{assign var="part_doc_link"  	value=""}
+{assign var="part_doc_info"		value=""}
+{assign var="part_kampfotolink" value=""}
+
+{assign var="jaar_extrabagage"	value=""}
+{assign var="jaar_playlist"		value=""}
+{assign var="jaar_doc_link"  	value=""}
+{assign var="jaar_doc_info"		value=""}
+{assign var="jaar_kampfotolink" value=""}
+
+{assign var="user_extrabagage"	value=""}
+{assign var="user_playlist"		value=""}
+{assign var="user_doc_link"  	value=""}
+{assign var="user_doc_info"		value=""}
+{assign var="user_kampfotolink" value=""}
+
+{assign var="brengen_van_rauw"  value=""}
+{assign var="brengen_tot_rauw"  value=""}
+{assign var="pres_van_rauw"  	value=""}
+{assign var="pres_tot_rauw"  	value=""}
+{assign var="halen_van_rauw"  	value=""}
+{assign var="halen_tot_rauw"  	value=""}
+
+{assign var="part_groepsletter"	value=""}
+{assign var="part_groepskleur"	value=""}
+{assign var="part_groepsnaam"	value=""}
+{assign var="jaar_groepsletter" value=""}
+{assign var="jaar_groepskleur"	value=""}
+{assign var="jaar_groepsnaam"	value=""}
+{assign var="user_groepsletter"	value=""}
+{assign var="user_groepskleur"	value=""}
+{assign var="user_groepsnaam"	value=""}
+
+{assign var="wachtlijstgeslacht"		value=""}
+{assign var="user_voorheenwachtlijst"	value=""}
+
+{assign var="onetimelogin"		 value=""}
+{assign var="loginlink"			 value=""}
+{assign var="logininfo"			 value=""}
+{assign var="loginrequest"		 value=""}
+{assign var="loginrequest_short" value=""}
+
+{capture assign="ozkweburl"}https://www.onvergetelijk.nl{/capture}
+{capture assign="ozkaccount"}https://www.onvergetelijk.nl/account{/capture}
+{capture assign="ozkimgurl"}https://www.onvergetelijk.nl/sites/default/files/ozkimages{/capture}
+{capture assign="ozkstyles"}https://www.onvergetelijk.nl/sites/default/files/styles{/capture}
+{capture assign="hlfimgurl"}{$ozkstyles}/square_profielfoto/public/profielfotos{/capture}
+
+{assign var="placeholder1" value="/sites/default/ozkimages/files/placeholder.png"}
+{assign var="placeholder2" value="/civicrm/contact/imagefile?photo=placeholder_29c31679575384c30fb02292a2b0106e.png"}
+{assign var="placeholder3" value="/civicrm/contact/imagefile?photo=placeholder_29c31679575384c30fb02292a2b0106e.png"}
+
+{capture assign="direct_cid"}{contact.contact_id}{/capture}
+{capture assign="direct_pid"}{participant.id}{/capture}
+{capture assign="direct_eid"}{event.id}{/capture}
+{capture assign="direct_bid"}{contribution.id}{/capture}
+
+{capture assign="part_pid"}{participant.custom_1771}{/capture}
+{capture assign="part_eid"}{participant.custom_1773}{/capture}
+{capture assign="part_bid"}{participant.custom_1662}{/capture}
+
+{capture assign="jaar_pid"}{contact.custom_1775}{/capture}
+{capture assign="jaar_eid"}{contact.custom_1776}{/capture}
+{capture assign="jaar_bid"}{contact.custom_1778}{/capture}
+
+{capture assign="user_cid"}{contact.contact_id}{/capture}
+{capture assign="contact_id"}{contact.contact_id}{/capture}
+
+{if $direct_pid gt 0}
+{capture assign="user_pid"}{$direct_pid}{/capture}
+{elseif $part_pid}
+{capture assign="user_pid"}{$part_pid}{/capture}
+{elseif $jaar_pid}
+{capture assign="user_pid"}{$jaar_pid}{/capture}
+{/if}
+
+{if $direct_eid gt 0}
+{capture assign="user_eid"}{$direct_eid}{/capture}
+{elseif $part_eid}
+{capture assign="user_eid"}{$part_eid}{/capture}
+{elseif $jaar_eid}
+{capture assign="user_eid"}{$jaar_eid}{/capture}
+{/if}
+
+{if $direct_bid gt 0}
+{capture assign="user_bid"}{$direct_bid}{/capture}
+{elseif $part_bid}
+{capture assign="user_bid"}{$part_bid}{/capture}
+{elseif $jaar_bid}
+{capture assign="user_bid"}{$jaar_bid}{/capture}
+{/if}
+
+{capture assign="voornaam"}{contact.first_name}{/capture}
+{capture assign="inlognaam"}{contact.job_title}{/capture}
+{capture assign="geslacht"}{contact.gender}{/capture}
+
+{capture assign="part_kampleeftijd_deci"}{participant.custom_1622}{/capture}
+{capture assign="part_kampleeftijd_rond"}{participant.custom_1621}{/capture}
+{capture assign="jaar_kampleeftijd_deci"}{contact.custom_1580}{/capture}
+{capture assign="jaar_kampleeftijd_rond"}{contact.custom_1578}{/capture}
+{if $part_kampleeftijd_deci}
+{capture assign="user_kampleeftijd_deci"}{$part_kampleeftijd_deci}{/capture}
+{capture assign="user_kampleeftijd_rond"}{$part_kampleeftijd_rond}{/capture}
+{elseif $jaar_kampleeftijd_deci}
+{capture assign="user_kampleeftijd_deci"}{$jaar_kampleeftijd_deci}{/capture}
+{capture assign="user_kampleeftijd_rond"}{$jaar_kampleeftijd_rond}{/capture}
+{/if}
+
+{capture assign="jaar_nuleeftijd_deci"}{contact.custom_1665}{/capture}
+{capture assign="jaar_nuleeftijd_rond"}{contact.custom_1666}{/capture}
+{if $jaar_nuleeftijd_deci}
+{capture assign="user_nuleeftijd_deci"}{$jaar_nuleeftijd_deci}{/capture}
+{capture assign="user_nuleeftijd_rond"}{$jaar_nuleeftijd_deci}{/capture}
+{/if}
+
+{capture assign="kerendeel"}{contact.custom_1437}{/capture}
+{capture assign="kerenleid"}{contact.custom_1438}{/capture}
+{capture assign="eerstexdeel"}{contact.custom_996}{/capture}
+{capture assign="eerstexleid"}{contact.custom_997}{/capture}
+
+{if $kerendeel eq 1 AND $eerstexdeel == "eerstex"}
+{assign var="voorheteerst" value="voor het eerst "}
+{/if}
+{if $kerenleid eq 1 AND $eerstexleid == "eerstex"}
+{assign var="voorheteerst" value="voor het eerst "}
+{/if}
+
+{capture assign="eerstedeel"}{contact.custom_842}{/capture}
+{capture assign="eersteleid"}{contact.custom_844}{/capture}
+{capture assign="laatstedeel"}{contact.custom_843}{/capture}
+{capture assign="laatsteleid"}{contact.custom_845}{/capture}
+
+{capture assign="issuesgedrag"}{contact.custom_1842}{/capture}
+
+{capture assign="part_kampkort"}{participant.custom_950}{/capture}
+{capture assign="jaar_kampkort"}{contact.custom_901}{/capture}
+{capture assign="geld_kampkort"}{contribution.custom_1744:name}{/capture}
+
+{if $part_kampkort}
+{capture assign="user_kampkort"}{$part_kampkort|upper}{/capture}
+{elseif $act_kampkort}
+{capture assign="user_kampkort"}{$act_kampkort|upper}{/capture}
+{elseif $geld_kampkort}
+{capture assign="user_kampkort"}{$geld_kampkort}{/capture}
+{elseif $jaar_kampkort}
+{capture assign="user_kampkort"}{$jaar_kampkort|upper}{/capture}
+{/if}
+
+{if $user_kampkort}
+{capture assign="user_kampkortlow"}{$user_kampkort|lower}{/capture}
+{capture assign="user_kampkortcap"}{$user_kampkort|upper}{/capture}
+{else}
+{capture assign="user_kampkort"}{/capture}
+{capture assign="user_kampkortlow"}{/capture}
+{capture assign="user_kampkortcap"}{/capture}
+{/if}
+
+{capture assign="part_kampnaam"}{participant.custom_949}{/capture}
+{capture assign="jaar_kampnaam"}{contact.custom_900}{/capture}
+{capture assign="geld_kampnaam"}{contribution.custom_1743:name}{/capture}
+
+{if $part_kampnaam}
+{capture assign="user_kampnaam"}{$part_kampnaam}{/capture}
+{elseif $act_kampnaam}
+{capture assign="user_kampnaam"}{$act_kampnaam}{/capture}
+{elseif $geld_kampnaam}
+{capture assign="user_kampnaam"}{$geld_kampnaam}{/capture}
+{elseif $jaar_kampnaam}
+{capture assign="user_kampnaam"}{$jaar_kampnaam}{/capture}
+{else}
+{capture assign="user_kampnaam"}{/capture}
+{/if}
+
+{capture assign="part_kampweek"}{contact.custom_1048}{/capture}
+{capture assign="jaar_kampweek"}{contact.custom_1048}{/capture}
+{if $part_kampweek}
+{capture assign="user_kampweek"}{$part_kampweek}{/capture}
+{elseif $jaar_kampweek}
+{capture assign="user_kampweek"}{$jaar_kampweek}{/capture}
+{else}
+{capture assign="user_kampweek"}{/capture}
+{/if}
+
+{capture assign="part_kampplek"}{participant.custom_1624}{/capture}
+{capture assign="jaar_kampplek"}{contact.custom_1163}{/capture}
+{if $part_kampplek}
+{capture assign="user_kampplek"}{$part_kampplek}{/capture}
+{elseif $jaar_kampplek}
+{capture assign="user_kampplek"}{$jaar_kampplek}{/capture}
+{/if}
+
+{capture assign="part_kampstad"}{participant.custom_1625}{/capture}
+{capture assign="jaar_kampstad"}{contact.custom_1164}{/capture}
+{if $part_kampstad}
+{capture assign="user_kampstad"}{$part_kampstad}{/capture}
+{elseif $jaar_kampstad}
+{capture assign="user_kampstad"}{$jaar_kampstad}{/capture}
+{/if}
+
+{capture assign="part_kampjaar"}{participant.custom_1623}{/capture}
+{capture assign="jaar_kampjaar"}{contact.custom_1157}{/capture}
+{if $part_kampjaar}
+{capture assign="user_kampjaar"}{$part_kampjaar}{/capture}
+{elseif $jaar_kampjaar}
+{capture assign="user_kampjaar"}{$jaar_kampjaar}{/capture}
+{/if}
+
+{capture assign="part_kamptype"}{participant.custom_992}{/capture}
+{capture assign="jaar_kamptype"}{contact.custom_993}{/capture}
+{if $part_kamptype}
+{capture assign="user_kamptype"}{$part_kamptype}{/capture}
+{elseif $jaar_kamptype}
+{capture assign="user_kamptype"}{$jaar_kamptype}{/capture}
+{/if}
+
+{if $user_kampweek eq 1}
+{assign var="andereweek" value="2"}
+{/if}
+{if $user_kampweek eq 2}
+{assign var="andereweek" value="1"}
+{/if}
+
+{capture assign="part_kampstart"}{participant.custom_1780}{/capture}
+{capture assign="jaar_kampstart"}{contact.custom_1155}{/capture}
+{capture assign="event_kampstart"}{event.start_date}{/capture}
+
+{if $part_kampstart}
+{capture assign="user_kampstart"}{$part_kampstart}{/capture}
+{elseif $jaar_kampstart}
+{capture assign="user_kampstart"}{$jaar_kampstart}{/capture}
+{elseif $event_kampstart}
+{capture assign="user_kampstart"}{$event_kampstart}{/capture}
+{/if}
+
+{capture assign="part_kampeinde"}{participant.custom_1781}{/capture}
+{capture assign="jaar_kampeinde"}{contact.custom_1156}{/capture}
+{capture assign="event_kampeinde"}{event.end_date}{/capture}
+
+{if $part_kampeinde}
+{capture assign="user_kampeinde"}{$part_kampeinde}{/capture}
+{elseif $jaar_kampeinde}
+{capture assign="user_kampeinde"}{$jaar_kampeinde}{/capture}
+{elseif $event_kampeinde}
+{capture assign="user_kampeinde"}{$event_kampeinde}{/capture}
+{/if}
+
+{capture assign="part_brengen_van"}{participant.custom_1974}{/capture}
+{capture assign="jaar_brengen_van"}{contact.custom_1968}{/capture}
+{capture assign="event_brengen_van"}{event.custom_1960}{/capture}
+
+{if $part_brengen_van}
+{capture assign="user_brengen_van"}{$part_brengen_van}{/capture}
+{elseif $jaar_brengen_van}
+{capture assign="user_brengen_van"}{$jaar_brengen_van}{/capture}
+{elseif $event_brengen_van}
+{capture assign="user_brengen_van"}{$event_brengen_van}{/capture}
+{/if}
+
+{capture assign="part_brengen_tot"}{participant.custom_1975}{/capture}
+{capture assign="jaar_brengen_tot"}{contact.custom_1969}{/capture}
+{capture assign="event_brengen_tot"}{event.custom_1961}{/capture}
+
+{if $part_brengen_tot}
+{capture assign="user_brengen_tot"}{$part_brengen_tot}{/capture}
+{elseif $jaar_brengen_tot}
+{capture assign="user_brengen_tot"}{$jaar_brengen_tot}{/capture}
+{elseif $event_brengen_tot}
+{capture assign="user_brengen_tot"}{$event_brengen_tot}{/capture}
+{/if}
+
+{capture assign="part_halen_van"}{participant.custom_1978}{/capture}
+{capture assign="jaar_halen_van"}{contact.custom_1972}{/capture}
+{capture assign="event_halen_van"}{event.custom_1959}{/capture}
+
+{if $part_halen_van}
+{capture assign="user_halen_van"}{$part_halen_van}{/capture}
+{elseif $jaar_halen_van}
+{capture assign="user_halen_van"}{$jaar_halen_van}{/capture}
+{elseif $event_halen_van}
+{capture assign="user_halen_van"}{$event_halen_van}{/capture}
+{/if}
+
+{capture assign="part_halen_tot"}{participant.custom_1979}{/capture}
+{capture assign="jaar_halen_tot"}{contact.custom_1973}{/capture}
+{capture assign="event_halen_tot"}{event.custom_1953}{/capture}
+
+{if $part_halen_tot}
+{capture assign="user_halen_tot"}{$part_halen_tot}{/capture}
+{elseif $jaar_halen_tot}
+{capture assign="user_halen_tot"}{$jaar_halen_tot}{/capture}
+{elseif $event_halen_tot}
+{capture assign="user_halen_tot"}{$event_halen_tot}{/capture}
+{/if}
+
+{capture assign="part_pres_van"}{participant.custom_1976}{/capture}
+{capture assign="jaar_pres_van"}{contact.custom_1970}{/capture}
+{capture assign="event_pres_van"}{event.custom_1958}{/capture}
+
+{if $part_pres_van}
+{capture assign="user_pres_van"}{$part_pres_van}{/capture}
+{elseif $jaar_pres_van}
+{capture assign="user_pres_van"}{$jaar_pres_van}{/capture}
+{elseif $event_pres_van}
+{capture assign="user_pres_van"}{$event_pres_van}{/capture}
+{/if}
+
+{capture assign="part_pres_tot"}{participant.custom_1977}{/capture}
+{capture assign="jaar_pres_tot"}{contact.custom_1971}{/capture}
+{capture assign="event_pres_tot"}{event.custom_1957}{/capture}
+
+{if $part_pres_tot}
+{capture assign="user_pres_tot"}{$part_pres_tot}{/capture}
+{elseif $jaar_pres_tot}
+{capture assign="user_pres_tot"}{$jaar_pres_tot}{/capture}
+{elseif $event_pres_tot}
+{capture assign="user_pres_tot"}{$event_pres_tot}{/capture}
+{/if}
+
+{assign var="kampstart_time"  		value=$user_kampstart|strtotime}
+{assign var="kampeinde_time"  		value=$user_kampeinde|strtotime}
+{assign var="kampstart_short"  		value=$kampstart_time|date_format:"%d-%m-%y"}
+{assign var="kampstart_full"		value=$kampstart_time|date_format:'%A %e %B'}
+{assign var="kampeinde_short"  		value=$kampeinde_time|date_format:"%d-%m-%y"}
+{assign var="kampeinde_full"		value=$kampeinde_time|date_format:'%A %e %B'}
+{assign var="kampstart_week_U" 		value=$kampstart_time|date_format:"%U"}
+{assign var="kampstart_week_V" 		value=$kampstart_time|date_format:"%V"}
+{assign var="kampstart_week_W" 		value=$kampstart_time|date_format:"%W"}
+
+{assign var="kampstart_weeknumber" 	value=$kampstart_time|date_format:'%W'}
+{assign var="kampstart_daynumber"  	value=$kampstart_time|date_format:"%j"}
+{assign var="kampeinde_daynumber"  	value=$user_kampeinde|strtotime|date_format:'%j'}
+
+{assign var="brengen_van_time"  	value=$user_brengen_van|strtotime}
+{assign var="brengen_tot_time"  	value=$user_brengen_tot|strtotime}
+{assign var="brengen_van" 			value=$brengen_van_time|date_format:"%H:%M"}
+{assign var="brengen_tot" 			value=$brengen_tot_time|date_format:'%H:%M'}
+{assign var="brengen_date_short"	value=$brengen_tot_time|date_format:'%d/%m'}
+{assign var="brengen_date_full"		value=$brengen_tot_time|date_format:'%A %e %B'}
+{assign var="brengen_date_dag"		value=$brengen_tot_time|date_format:'%A'}
+
+{assign var="pres_van_time"  		value=$user_pres_van|strtotime}
+{assign var="pres_tot_time"  		value=$user_pres_tot|strtotime}
+{assign var="pres_van" 				value=$pres_van_time|date_format:'%H:%M'}
+{assign var="pres_tot" 				value=$pres_tot_time|date_format:'%H:%M'}
+{assign var="pres_date_short"		value=$pres_tot_time|date_format:'%d/%m'}
+{assign var="pres_date_full"		value=$pres_tot_time|date_format:'%A %e %B'}
+{assign var="pres_date_dag"			value=$pres_tot_time|date_format:'%A'}
+
+{assign var="halen_van_time"  		value=$user_halen_van|strtotime}
+{assign var="halen_tot_time"  		value=$user_halen_tot|strtotime}
+{assign var="halen_van" 			value=$halen_van_time|date_format:"%H:%M"}
+{assign var="halen_tot" 			value=$halen_tot_time|date_format:"%H:%M"}
+{assign var="halen_date_short"		value=$halen_tot_time|date_format:'%d/%m'}
+{assign var="halen_date_full"		value=$halen_tot_time|date_format:'%A %e %B'}
+{assign var="halen_date_dag"		value=$halen_tot_time|date_format:'%A'}
+
+{assign var="smartynow" 			value=$smarty.now}
+{assign var="smartynow_week" 		value=$smartynow|date_format:"%V"}
+{assign var="smartynow_day" 		value=$smartynow|date_format:"%j"}
+
+{assign var="today_weeknumber" 		value=$smartynow_week}
+{assign var="today_weeknumber" 		value=$smartynow_week}
+{assign var="today_daynumber" 		value=$smartynow_day}
+
+{if $kampstart_weeknumber	gt 0 AND $today_weeknumber gt 0}
+{math assign="weeksuntil" equation='x - y' x=$kampstart_week_W 		y=$today_weeknumber}
+{/if}
+
+{if $kampstart_daynumber  	gt 0 AND $today_daynumber  gt 0}
+{math assign="daysuntil"  equation='x - y' x=$kampstart_daynumber  	y=$today_daynumber}
+{/if}
+
+{if $kampeinde_daynumber  	gt 0 AND $today_daynumber  gt 0}
+{math assign="dayssince"  equation='x - y' x=$today_daynumber      	y=$kampeinde_daynumber}
+{/if}
+
+{capture assign="communicatiestijl"}{contact.communication_style_id:label}{/capture}
+
+{assign var="aanspreek_uje"   		value="u"}
+{assign var="aanspreek_uwjouw" 		value="uw"}
+
+{if $communicatiestijl eq "formal" OR $communicatiestijl eq "Formeel"}
+{assign var="aanspreek_uje"   	value="u"}
+{assign var="aanspreek_uwjouw" 	value="uw"}
+{else}
+{assign var="aanspreek_uje"   	value="je"}
+{assign var="aanspreek_uwjouw"	value="jouw"}
+{/if}
+
+{capture assign="part_kampfunctie"}{participant.custom_969}{/capture}
+{capture assign="jaar_kampfunctie"}{contact.custom_865}{/capture}
+{if $part_kampfunctie}
+{capture assign="user_kampfunctie"}{$part_kampfunctie}{/capture}
+{elseif $jaar_kampfunctie}
+{capture assign="user_kampfunctie"}{$jaar_kampfunctie}{/capture}
+{/if}
+
+{capture assign="part_kamprol"}{participant.custom_1652}{/capture}
+{capture assign="jaar_kamprol"}{contact.custom_1651}{/capture}
+{if $part_kamprol}
+{capture assign="user_kamprol"}{$part_kamprol}{/capture}
+{elseif $jaar_kamprol}
+{capture assign="user_kamprol"}{$jaar_kamprol}{/capture}
+{/if}
+
+{if ($user_kampkort eq "top" OR $user_kampkort eq "TOP") AND $user_kamprol eq "deelnemer"}
+{capture assign="adminzoom_short"}rapport/deel/topkamp/zoom/{$user_pid}{/capture}
+{capture assign="adminedit_short"}form/deelnemer/topkamp/admin?cid2={$user_cid}&c2event1={$user_eid}{/capture}
+{capture assign="zelfedit_short"}form/deelnemer/topkamp/aanpassen?{contact.checksum}&cid1={$user_cid}&c1event1={$user_eid}{/capture}
+{capture assign="zelfeditbio_short"}form/topkamp/bio?{contact.checksum}&cid1={$user_cid}&c1event1={$user_eid}{/capture}
+{elseif $user_kamprol eq "deelnemer"}
+{capture assign="adminzoom_short"}rapport/deel/zoom/{$user_pid}{/capture}
+{capture assign="adminedit_short"}form/deelnemer/admin?cid2={$user_cid}&c2event1={$user_eid}{/capture}
+{capture assign="zelfedit_short"}form/deelnemer/aanpassen?{contact.checksum}&cid1={$user_cid}&c1event1={$user_eid}{/capture}
+{capture assign="zelfeditbio_short"}{/capture}
+{elseif $user_kamprol eq "leiding"}
+{capture assign="adminzoom_short"}rapport/leid/zoom/{$user_pid}{/capture}
+{capture assign="adminedit_short"}form/leiding/admin?cid2={$user_cid}&c2event1={$user_eid}{/capture}
+{capture assign="zelfedit_short"}form/leiding/aanpassen?{contact.checksum}&cid1={$user_cid}&c1event1={$user_eid}{/capture}
+{capture assign="zelfeditbio_short"}form/leiding/bio?{contact.checksum}&cid1={$user_cid}&c1event1={$user_eid}{/capture}
+{else}
+{capture assign="adminzoom_short"}rapport/contact/zoom/{$user_pid}{/capture}
+{capture assign="adminedit_short"}form/leiding/admin?cid2={$user_cid}&c2event1={$user_eid}{/capture}
+{capture assign="zelfedit_short"}form/leiding/aanpassen?{contact.checksum}&cid1={$user_cid}&c1event1={$user_eid}{/capture}
+{capture assign="zelfeditbio_short"}form/leiding/bio?{contact.checksum}&cid1={$user_cid}&c1event1={$user_eid}{/capture}
+{/if}
+
+{capture assign="hldn1"}{contact.custom_951}{/capture}
+{capture assign="hldn2"}{contact.custom_952}{/capture}
+{capture assign="hldn3"}{contact.custom_1044}{/capture}
+
+{capture assign="hldn1_fn"}{contact.custom_951}{/capture}
+{capture assign="hldn2_fn"}{contact.custom_952}{/capture}
+{capture assign="hldn3_fn"}{contact.custom_1044}{/capture}
+
+{capture assign="hldn1_dn"}{contact.custom_938}{/capture}
+{capture assign="hldn2_dn"}{contact.custom_939}{/capture}
+{capture assign="hldn3_dn"}{contact.custom_1043}{/capture}
+
+{capture assign="hldn1_ph"}{contact.custom_1325}{/capture}
+{capture assign="hldn2_ph"}{contact.custom_1326}{/capture}
+{capture assign="hldn3_ph"}{contact.custom_1327}{/capture}
+
+{capture assign="hldn1_img"}{contact.custom_1463}{/capture}
+{capture assign="hldn2_img"}{contact.custom_1464}{/capture}
+{capture assign="hldn3_img"}{contact.custom_1465}{/capture}
+
+{assign var="sep12" value=" & "}
+{if $hldn3}
+{assign var="sep12" value=", "}
+{else}
+{assign var="sep12" value=" & "}
+{/if}
+
+{capture assign="part_welkomvideo"}{participant.custom_1995}{/capture}
+{capture assign="jaar_welkomvideo"}{contact.custom_1517}{/capture}
+{if $part_welkomvideo}
+{capture assign="user_welkomvideo"}{$part_welkomvideo}{/capture}
+{elseif $jaar_welkomvideo}
+{capture assign="user_welkomvideo"}{$jaar_welkomvideo}{/capture}
+{/if}
+
+{capture assign="part_slotvideo"}{participant.custom_1996}{/capture}
+{capture assign="jaar_slotvideo"}{contact.custom_1999}{/capture}
+{if $part_slotvideo}
+{capture assign="user_slotvideo"}{$part_slotvideo}{/capture}
+{elseif $jaar_slotvideo}
+{capture assign="user_slotvideo"}{$jaar_slotvideo}{/capture}
+{/if}
+
+{capture assign="part_thema_naam"}{participant.custom_2080}{/capture}
+{capture assign="jaar_thema_naam"}{contact.custom_2078}{/capture}
+{if $part_thema_naam}
+{capture assign="user_thema_naam"}{$part_thema_naam}{/capture}
+{elseif $jaar_thema_naam}
+{capture assign="user_thema_naam"}{$jaar_thema_naam}{/capture}
+{/if}
+
+{capture assign="part_thema_info"}{participant.custom_2081}{/capture}
+{capture assign="jaar_thema_info"}{contact.custom_2079}{/capture}
+{if $part_thema_info}
+{capture assign="user_thema_info"}{$part_thema_info}{/capture}
+{elseif $jaar_thema_info}
+{capture assign="user_thema_info"}{$jaar_thema_info}{/capture}
+{/if}
+
+{capture assign="part_goeddoel_naam"}{participant.custom_2072}{/capture}
+{capture assign="jaar_goeddoel_naam"}{contact.custom_2075}{/capture}
+{if $part_goeddoel_naam}
+{capture assign="user_goeddoel_naam"}{$part_goeddoel_naam}{/capture}
+{elseif $jaar_goeddoel_naam}
+{capture assign="user_goeddoel_naam"}{$jaar_goeddoel_naam}{/capture}
+{/if}
+
+{capture assign="part_goeddoel_info"}{participant.custom_2073}{/capture}
+{capture assign="jaar_goeddoel_info"}{contact.custom_2076}{/capture}
+{if $part_goeddoel_info}
+{capture assign="user_goeddoel_info"}{$part_goeddoel_info}{/capture}
+{elseif $jaar_goeddoel_info}
+{capture assign="user_goeddoel_info"}{$jaar_goeddoel_info}{/capture}
+{/if}
+
+{capture assign="part_goeddoel_link"}{participant.custom_2074}{/capture}
+{capture assign="jaar_goeddoel_link"}{contact.custom_2077}{/capture}
+{if $part_goeddoel_link}
+{capture assign="user_goeddoel_link"}{$part_goeddoel_link}{/capture}
+{elseif $jaar_goeddoel_link}
+{capture assign="user_goeddoel_link"}{$jaar_goeddoel_link}{/capture}
+{/if}
+
+{capture assign="part_extrabagage"}{participant.custom_2002}{/capture}
+{capture assign="jaar_extrabagage"}{contact.custom_1991}{/capture}
+{if $part_extrabagage}
+{capture assign="user_extrabagage"}{$part_extrabagage}{/capture}
+{elseif $jaar_extrabagage}
+{capture assign="user_extrabagage"}{$jaar_extrabagage}{/capture}
+{/if}
+
+{capture assign="part_playlist"}{participant.custom_1998}{/capture}
+{capture assign="jaar_playlist"}{contact.custom_1859}{/capture}
+{if $part_playlist}
+{capture assign="user_playlist"}{$part_playlist}{/capture}
+{elseif $jaar_playlist}
+{capture assign="user_playlist"}{$jaar_playlist}{/capture}
+{/if}
+
+{capture assign="part_doc_link"}{participant.custom_2069}{/capture}
+{capture assign="jaar_doc_link"}{contact.custom_2066}{/capture}
+{if $part_doc_link}
+{capture assign="user_doc_link"}{$part_doc_link}{/capture}
+{elseif $jaar_doc_link}
+{capture assign="user_doc_link"}{$jaar_doc_link}{/capture}
+{/if}
+
+{capture assign="part_doc_info"}{participant.custom_2070}{/capture}
+{capture assign="jaar_doc_info"}{contact.custom_2067}{/capture}
+{if $part_doc_info}
+{capture assign="user_doc_info"}{$part_doc_info}{/capture}
+{elseif $jaar_doc_info}
+{capture assign="user_doc_info"}{$jaar_doc_info}{/capture}
+{/if}
+
+{capture assign="part_kampfotolink"}{participant.custom_2000}{/capture}
+{capture assign="jaar_kampfotolink"}{contact.custom_1341}{/capture}
+{if $part_kampfotolink}
+{capture assign="user_kampfotolink"}{$part_kampfotolink}{/capture}
+{elseif $jaar_kampfotolink}
+{capture assign="user_kampfotolink"}{$jaar_kampfotolink}{/capture}
+{/if}
+
+{capture assign="part_groepsletter"}{participant.custom_1765}{/capture}
+{capture assign="jaar_groepsletter"}{contact.custom_2062}{/capture}
+{if $part_groepsletter}
+{capture assign="user_groepsletter"}{$part_groepsletter}{/capture}
+{elseif $jaar_groepsletter}
+{capture assign="user_groepsletter"}{$jaar_groepsletter}{/capture}
+{/if}
+
+{capture assign="part_groepskleur"}{participant.custom_1766}{/capture}
+{capture assign="jaar_groepskleur"}{contact.custom_1228}{/capture}
+{if $part_groepskleur}
+{capture assign="user_groepskleur"}{$part_groepskleur}{/capture}
+{elseif $jaar_groepskleur}
+{capture assign="user_groepskleur"}{$jaar_groepskleur}{/capture}
+{/if}
+
+{capture assign="part_groepsnaam"}{participant.custom_1803}{/capture}
+{capture assign="jaar_groepsnaam"}{contact.custom_2063}{/capture}
+{if $part_groepsnaam}
+{capture assign="user_groepsnaam"}{$part_groepsnaam}{/capture}
+{elseif $jaar_groepsnaam}
+{capture assign="user_groepsnaam"}{$jaar_groepsnaam}{/capture}
+{/if}
+
+{if !empty($user_groepsletter) AND empty($user_groepskleur)}
+{assign var="maingroepjetype" value="letter"}
+{capture assign="maingroepje"}{$user_groepsletter}{/capture}
+{/if}
+{if !empty($user_groepsletter) AND !empty($user_groepskleur)}
+{assign var="maingroepjetype" value="letter"}
+{capture assign="maingroepje"}{$user_groepsletter}{/capture}
+{/if}
+{if  empty($user_groepsletter) AND !empty($user_groepskleur)}
+{assign var="maingroepjetype" value="kleur"}
+{capture assign="maingroepje"}{$user_groepskleur}{/capture}
+{/if}
+
+{capture assign="brengen_van_rauw"}{contact.custom_1968}{/capture}
+{capture assign="brengen_tot_rauw"}{contact.custom_1969}{/capture}
+{capture assign="pres_van_rauw"}{contact.custom_1970}{/capture}
+{capture assign="pres_tot_rauw"}{contact.custom_1971}{/capture}
+{capture assign="halen_van_rauw"}{contact.custom_1972}{/capture}
+{capture assign="halen_tot_rauw"}{contact.custom_1973}{/capture}
+
+{capture assign="pasfoto"}{contact.image_URL}{/capture}
+
+{capture assign="fotoedit_cms_short"}profielfoto/edit{/capture}
+{capture assign="fotoedit_crm_short"}civicrm/profile/edit?reset=1&{contact.checksum}&id={$user_cid}&gid=143{/capture}
+
+{if $user_kamprol eq "leiding"}
+{capture assign="fotoedit_short"}{$fotoedit_cms_short}{/capture}
+{else}
+{capture assign="fotoedit_short"}{$fotoedit_crm_short}{/capture}
+{/if}
+{capture assign="fotoedit"}{$ozkweburl}/{$fotoedit_short}{/capture}
+
+{capture assign="fotoleeg"}Upload een vierkante pasfoto{/capture}
+{capture assign="fotogoed"}{$aanspreek_uje|capitalize} kunt de foto aanpassen{/capture}
+{capture assign="fototodo"}{$fotoleeg}{/capture}
+{capture assign="fotoactie"}actie nodig{/capture}
+
+{if $pasfoto eq $placeholder1 OR $pasfoto eq $placeholder2 OR $pasfoto eq $placeholder3}
+{assign var="fotoactie" value="actie nodig"}
+{capture assign="fototodo"}{$fotoleeg}{/capture}
+{capture assign="fotolink_short"}{$placeholder2}{/capture}
+{capture assign="fotolink"}{$ozkweburl}/{$placeholder2}{/capture}
+{elseif empty($pasfoto)}
+{assign var="fotoactie" value="actie nodig"}
+{capture assign="fototodo"}{$fotoleeg}{/capture}
+{capture assign="fotolink_short"}{$placeholder2}{/capture}
+{capture assign="fotolink"}{$ozkweburl}/{$placeholder2}{/capture}
+{else}
+{assign var="fotoactie" value="geupload"}
+{capture assign="fototodo"}{$fotogoed}{/capture}
+{capture assign="fotolink_short"}{$pasfoto}{/capture}
+{capture assign="fotolink"}{$pasfoto}{/capture}
+{/if}
+
+{capture assign="part_wachtlijsterop"}{participant.custom_1925}{/capture}
+{capture assign="jaar_wachtlijsterop"}{contact.custom_2084}{/capture}
+{if $part_wachtlijsterop}
+{capture assign="user__wachtlijsterop"}{$part_wachtlijsterop}{/capture}
+{elseif $jaar_wachtlijsterop}
+{capture assign="user__wachtlijsterop"}{$jaar_wachtlijsterop}{/capture}
+{/if}
+
+{if $geslacht eq 'jongen'}{assign var="wachtlijstgeslacht" value="meisjes"}{/if}
+{if $geslacht eq 'meisje'}{assign var="wachtlijstgeslacht" value="jongens"}{/if}
+
+{capture assign="part_school"}{participant.custom_593}{/capture}
+{capture assign="jaar_school"}{contact.custom_1051}{/capture}
+{if $part_school}
+{capture assign="user_school"}{$part_school}{/capture}
+{elseif $jaar_school}
+{capture assign="user_school"}{$jaar_school}{/capture}
+{/if}
+
+{capture assign="part_voorkeur"}{participant.custom_892}{/capture}
+{capture assign="jaar_voorkeur"}{contact.custom_1208}{/capture}
+{if $part_voorkeur}
+{capture assign="user_voorkeur"}{$part_voorkeur}{/capture}
+{elseif $jaar_voorkeur}
+{capture assign="user_voorkeur"}{$jaar_voorkeur}{/capture}
+{/if}
+
+{capture assign="criterialeeftijd"}{contact.custom_1263}{/capture}
+{capture assign="criteriaschool"}{contact.custom_1264}{/capture}
+{capture assign="criteriaindicatie"}{contact.custom_2082}{/capture}
+{capture assign="criteriaoordeel"}{contact.custom_2083}{/capture}
+
+{if $criterialeeftijd eq "afwijkend"}
+{assign var="boxleeftijd" value="kruis.png"}
+{elseif $criterialeeftijd eq "marge"}
+{assign var="boxleeftijd" value="asterisk.png"}
+{elseif $criterialeeftijd eq "prima"}
+{assign var="boxleeftijd" value="check.png"}
+{else}
+{assign var="boxleeftijd" value="vraag.png"}
+{/if}
+
+{if $criteriaschool eq "afwijkend"}
+{assign var="boxschool" value="kruis.png"}
+{elseif $criteriaschool eq "marge"}
+{assign var="boxschool" value="asterisk.png"}
+{elseif $criteriaschool eq "prima"}
+{assign var="boxschool" value="check.png"}
+{else}
+{assign var="boxschool" value="vraag.png"}
+{/if}
+
+{if $criteriaoordeel eq "oordeelprima" AND $criterialeeftijd neq "prima"}
+{assign var="boxleeftijd" value="asterisk.png"}
+{/if}
+{if $criteriaoordeel eq "oordeelprima" AND $criteriaschool   neq "prima"}
+{assign var="boxschool" value="asterisk.png"}
+{/if}
+
+{capture assign="user_form_short_nawbasis"}form/leiding/check?{contact.checksum}&cid1={$user_cid}&c1event1={$user_eid}{/capture}
+{capture assign="user_form_short_biotalent"}form/leiding/bio?{contact.checksum}&cid1={$user_cid}&c1event1={$user_eid}{/capture}
+{capture assign="user_form_short_refpersoon"}form/referentie/wie?{contact.checksum}&cid1={$user_cid}&c1event1={$user_eid}{/capture}
+{capture assign="user_form_short_vogaanvraag"}form/vog/ingediend?{contact.checksum}&cid1={$user_cid}&c1event1={$user_eid}{/capture}
+{capture assign="user_form_short_vogafwachting"}form/vog/afwachting?{contact.checksum}&cid1={$user_cid}&c1event1={$user_eid}{/capture}
+{capture assign="user_form_short_vogontvangst"}form/vog/ontvangen?{contact.checksum}&cid1={$user_cid}&c1event1={$user_eid}{/capture}
+
+{capture assign="user_form_nawbasis"}{$ozkweburl}/{$user_form_short_nawbasis}{/capture}
+{capture assign="user_form_biotalent"}{$ozkweburl}/{$user_form_short_biotalent}{/capture}
+{capture assign="user_form_refpersoon"}{$ozkweburl}/{$user_form_short_refpersoon}{/capture}
+{capture assign="user_form_vogaanvraag"}{$ozkweburl}/{$user_form_short_vogaanvraag}{/capture}
+{capture assign="user_form_vogafwachting"}{$ozkweburl}/{$user_form_short_vogafwachting}{/capture}
+{capture assign="user_form_vogontvangst"}{$ozkweburl}/{$user_form_short_vogontvangst}{/capture}
+
+{capture assign="part_intnodig"}{participant.custom_1720}{/capture}
+{capture assign="part_intstatus"}{participant.custom_1714}{/capture}
+
+{capture assign="part_nawnodig"}{participant.custom_1721}{/capture}
+{capture assign="part_nawupdate"}{participant.custom_1506}{/capture}
+{capture assign="part_nawstatus"}{participant.custom_1715}{/capture}
+
+{capture assign="part_bionodig"}{participant.custom_1507}{/capture}
+{capture assign="part_bioupdate"}{participant.custom_1507}{/capture}
+{capture assign="part_biostatus"}{participant.custom_1716}{/capture}
+
+{capture assign="part_refnodig"}{participant.custom_1723}{/capture}
+{capture assign="part_refpersoon"}{participant.custom_1301}{/capture}
+{capture assign="part_reffeedback"}{participant.custom_1296}{/capture}
+{capture assign="part_refstatus"}{participant.custom_1717}{/capture}
+
+{capture assign="part_vognodig"}{participant.custom_1724}{/capture}
+{capture assign="part_vogdatum"}{participant.custom_603}{/capture}
+{capture assign="part_vogstatus"}{participant.custom_1719}{/capture}
+
+{capture assign="jaar_intnodig"}{contact.custom_1494}{/capture}
+{capture assign="jaar_intstatus"}{contact.custom_1492}{/capture}
+
+{capture assign="jaar_nawnodig"}{contact.custom_1664}{/capture}
+{capture assign="jaar_nawcheck"}{contact.custom_1505}{/capture}
+{capture assign="jaar_nawstatus"}{contact.custom_1508}{/capture}
+
+{capture assign="jaar_bionodig"}{contact.custom_1495}{/capture}
+{capture assign="jaar_biocheck"}{contact.custom_1497}{/capture}
+{capture assign="jaar_biostatus"}{contact.custom_1498}{/capture}
+
+{capture assign="jaar_refnodig"}{contact.custom_1019}{/capture}
+{capture assign="jaar_refpersoon"}{contact.custom_1782}{/capture}
+{capture assign="jaar_refrecent"}{contact.custom_1004}{/capture}
+{capture assign="jaar_refstatus"}{contact.custom_1490}{/capture}
+
+{capture assign="jaar_vognodig"}{contact.custom_998}{/capture}
+{capture assign="jaar_vogrecent"}{contact.custom_56}{/capture}
+{capture assign="jaar_vogstatus"}{contact.custom_1489}{/capture}
+
+{if $part_intnodig}
+{capture assign="user_intnodig"}{$part_intnodig}{/capture}
+{elseif $jaar_intnodig}
+{capture assign="user_intnodig"}{$jaar_intnodig}{/capture}
+{/if}
+
+{if $part_nawnodig}
+{capture assign="user_nawnodig"}{$part_nawnodig}{/capture}
+{elseif $jaar_nawnodig}
+{capture assign="user_nawnodig"}{$jaar_nawnodig}{/capture}
+{/if}
+
+{if $part_bionodig}
+{capture assign="user_bionodig"}{$part_bionodig}{/capture}
+{elseif $jaar_bionodig}
+{capture assign="user_bionodig"}{$jaar_bionodig}{/capture}
+{/if}
+
+{if $part_refnodig}
+{capture assign="user_refnodig"}{$part_refnodig}{/capture}
+{elseif $jaar_refnodig}
+{capture assign="user_refnodig"}{$jaar_refnodig}{/capture}
+{/if}
+
+{if $part_vognodig}
+{capture assign="user_vognodig"}{$part_vognodig}{/capture}
+{elseif $jaar_vognodig}
+{capture assign="user_vognodig"}{$jaar_vognodig}{/capture}
+{/if}
+
+{if $part_intstatus}
+{capture assign="user_intstatus"}{$part_intstatus}{/capture}
+{elseif $jaar_intstatus}
+{capture assign="user_intstatus"}{$jaar_intstatus}{/capture}
+{/if}
+
+{if $part_nawstatus}
+{capture assign="user_nawstatus"}{$part_nawstatus}{/capture}
+{elseif $jaar_nawstatus}
+{capture assign="user_nawstatus"}{$jaar_nawstatus}{/capture}
+{/if}
+
+{if $part_biostatus}
+{capture assign="user_biostatus"}{$part_biostatus}{/capture}
+{elseif $jaar_biostatus}
+{capture assign="user_biostatus"}{$jaar_biostatus}{/capture}
+{/if}
+
+{if $part_refstatus}
+{capture assign="user_refstatus"}{$part_refstatus}{/capture}
+{elseif $jaar_refstatus}
+{capture assign="user_refstatus"}{$jaar_refstatus}{/capture}
+{/if}
+
+{if $part_vogstatus}
+{capture assign="user_vogstatus"}{$part_vogstatus}{/capture}
+{elseif $jaar_vogstatus}
+{capture assign="user_vogstatus"}{$jaar_vogstatus}{/capture}
+{/if}
+
+{if $part_nawcheck}
+{capture assign="user_nawcheck"}{$part_nawcheck}{/capture}
+{elseif $jaar_nawcheck}
+{capture assign="user_nawcheck"}{$jaar_nawcheck}{/capture}
+{else}
+{capture assign="user_nawcheck"}{/capture}
+{/if}
+
+{assign var="time_nawcheck" 	value=$user_nawcheck|strtotime}
+{assign var="user_nawcheck" 	value=$time_nawcheck|crmDate:"%d-%m-%y"}
+
+{if $part_biocheck}
+{capture assign="user_biocheck"}{$part_biocheck}{/capture}
+{elseif $jaar_biocheck}
+{capture assign="user_biocheck"}{$jaar_biocheck}{/capture}
+{else}
+{capture assign="user_biocheck"}{/capture}
+{/if}
+{assign var="time_biocheck" 	value=$user_biocheck|strtotime}
+{assign var="user_biocheck" 	value=$time_biocheck|crmDate:"%d-%m-%y"}
+
+{if $part_refpersoon}
+{capture assign="user_refpersoon"}{$part_refpersoon}{/capture}
+{elseif $jaar_refpersoon}
+{capture assign="user_refpersoon"}{$jaar_refpersoon}{/capture}
+{/if}
+
+{if $part_reffeedback}
+{capture assign="user_refrecent"}{$part_reffeedback}{/capture}
+{elseif $jaar_refrecent}
+{capture assign="user_refrecent"}{$jaar_refrecent}{/capture}
+{/if}
+
+{if $part_vogrecent}
+{capture assign="user_vogrecent"}{$part_vogrecent}{/capture}
+{elseif $jaar_vogrecent}
+{capture assign="user_vogrecent"}{$jaar_vogrecent}{/capture}
+{/if}
+
+{assign var="inttodo"  value="Jouw intakestappen"}
+{assign var="intactie" value="actie nodig"}
+{assign var="boxint"   value="kruis.png"}
+
+{if empty($user_intstatus) OR $user_intstatus eq "ongecheckt"}
+{assign var="intactie" value="actie nodig"}
+{assign var="boxint"   value="kruis.png"}
+{if $user_kamprol eq "leiding" OR $user_kampkort eq "top" OR $user_kampkort eq "TOP"}
+{assign var="inttodo" value="Jouw intakestappen"}
+{elseif $user_kamprol eq "deelnemer"}
+{assign var="inttodo" value="De checklist voor {contact.first_name}"}
+{/if}
+{/if}
+
+{assign var="nawtodo"  value="Basisgegevens aanpassen"}
+{assign var="nawactie" value="actie nodig"}
+{assign var="boxnaw"   value="kruis.png"}
+
+{if empty($user_nawstatus) OR $user_nawstatus eq "ongecheckt"}
+{assign var="nawactie" value="actie nodig"}
+{assign var="boxnaw"   value="kruis.png"}
+{if $user_kamprol eq "leiding" OR $user_kampkort eq "top" OR $user_kampkort eq "TOP"}
+{assign var="nawtodo" value="Update je basisgegevens"}
+{elseif $user_kamprol eq "deelnemer"}
+{assign var="nawtodo" value="Bevestig de gegevens van {contact.first_name}"}
+{/if}
+{/if}
+
+{if $user_nawstatus eq "bijgewerkt"}
+{assign var="nawactie" value=$user_nawcheck}
+{assign var="boxnaw"   value="check.png"}
+{if $user_kamprol eq "leiding" OR $user_kampkort eq "top" OR $user_kampkort eq "TOP"}
+{assign var="nawtodo" value="Je basisinfo is bijgewerkt"}
+{elseif $user_kamprol eq "deelnemer"}
+{assign var="nawtodo" value="U kunt de basisinfo aanpassen"}
+{/if}
+{/if}
+
+{assign var="biotodo"  value="Bio en talenten aanpassen"}
+{assign var="bioactie" value="actie nodig"}
+{assign var="boxbio"   value="kruis.png"}
+
+{if empty($user_biostatus) OR $user_biostatus eq "nogleeg" OR $user_biostatus eq "ongecheckt"}
+{assign var="biotodo"  value="Update je bio en talenten"}
+{assign var="bioactie" value="actie nodig"}
+{assign var="boxbio"   value="kruis.png"}
+{/if}
+
+{if $user_biostatus eq "bijgewerkt"}
+{assign var="biotodo"  value="Je bio en talenten bijgewerkt"}
+{assign var="bioactie" value=$user_biocheck}
+{assign var="boxbio"   value="check.png"}
+{elseif $user_bionodig eq "noggoed"}
+{assign var="biotodo"  value="Je bio en talenten bijgewerkt"}
+{assign var="bioactie" value=$user_biocheck}
+{assign var="boxbio"   value="check.png"}
+{/if}
+
+{assign var="reftodo"  value="Jouw referentie"}
+{assign var="refactie" value="actie nodig"}
+{assign var="boxref"   value="check.png"}
+
+{if $user_refstatus eq "noggoed"}
+{assign var="refactie" value=$user_refrecent}
+{assign var="reftodo"  value="Je referentie is nog in orde"}
+{assign var="boxref"   value="check.png"}
+{/if}
+{if empty($user_refstatus) OR $user_refstatus eq "onbekend" OR $user_refstatus eq "inhaal" OR $user_refstatus eq "ontbreekt"}
+{assign var="refactie" value="actie nodig"}
+{assign var="reftodo"  value="Geef je referentiepersoon door"}
+{assign var="boxref"   value="kruis.png"}
+{/if}
+{if $user_refstatus eq "bekend" OR $user_refstatus eq "gevraagd"}
+{assign var="refactie" value="afwachting"}
+{assign var="reftodo"  value="Jouw referentie is bekend"}
+{assign var="boxref"   value="check.png"}
+{/if}
+{if $user_refstatus eq "ontvangen"}
+{assign var="refactie" value=$user_refrecent}
+{assign var="reftodo"  value="Jouw referentie is in orde"}
+{assign var="boxref"   value="check.png"}
+{/if}
+
+{if $user_refnodig eq "noggoed"}
+{assign var="refactie" value="nog goed"}
+{assign var="reftodo"  value="Je referentie is nog in orde"}
+{assign var="boxref"   value="check.png"}
+{/if}
+
+{assign var="vogtodo"  value="Jouw VOG aanvraag"}
+{assign var="vogactie" value="actie nodig"}
+{assign var="boxvog"   value="check.png"}
+
+{if empty($user_vogstatus)}
+{assign var="vogactie" value="info volgt"}
+{assign var="vogtodo"  value="Update over jouw VOG volgt"}
+{assign var="boxvog"   value="info.png"}
+{/if}
+{if $user_vogstatus eq "noggoed"}
+{assign var="vogactie" value="nog goed"}																
+{assign var="vogtodo"  value="Je VOG is nog in orde"}																
+{assign var="boxvog"   value="check.png"}
+{/if}
+{if $user_vogstatus eq "klaarzetten"}
+{assign var="vogactie" value="binnenkort"}
+{assign var="vogtodo"  value="Jouw VOG verzoek volgt nog"}
+{assign var="boxvog"   value="info.png"}
+{/if}
+{if $user_vogstatus eq "verzocht"}
+{assign var="vogactie" value="actie nodig"}
+{assign var="vogtodo"  value="Geef je VOG aanvraag door"}
+{assign var="boxvog"   value="kruis.png"}
+{/if}
+{if $user_vogstatus eq "ingediend"}
+{assign var="vogactie" value="actie nodig"}
+{assign var="vogtodo"  value="Upload je nieuwe VOG"}
+{assign var="boxvog"   value="kruis.png"}
+{/if}
+{if $user_vogstatus eq "ontvangen"}
+{assign var="vogactie" value=$user_vogrecent}
+{assign var="vogtodo"  value="Je hebt je VOG geupload"}
+{assign var="boxvog"   value="check.png"}
+{/if}
+
+
+{capture assign="huurfiets"}{contact.custom_1173}{/capture}
+{if $user_kamptype eq "tienerkamp"}
+{assign var="fietshuur" value="Het kan gaan om het reguliere kampgeld of eventueel later bijgeboekte fietshuur."}
+{/if}
+
+{capture assign="geld_regeling"}{contribution.custom_1472:name}{/capture}
+{capture assign="part_regeling"}{participant.custom_248:name}{/capture}
+{capture assign="jaar_regeling"}{contact.custom_2003:name}{/capture}	
+
+{if $geld_regeling}
+{capture assign="user_regeling"}{$geld_regeling}{/capture}
+{elseif $part_regeling}
+{capture assign="user_regeling"}{$part_regeling}{/capture}
+{elseif $jaar_regeling}
+{capture assign="user_regeling"}{$jaar_regeling}{/capture}
+{/if}
+
+{assign var="kampgeldstatus" value="nietbetaald"}
+{assign var="kampgeld"       value="kampgeld"}
+{assign var="kampgeldimg"    value="info.png"}
+
+{if $direct_bid AND $direct_bid gt 0}
+{capture assign="contribstatus"}{contribution.contribution_status_id:name}{/capture}
+{capture assign="contribdatum"}{contribution.receive_date}{/capture}
+
+{capture assign="direct_bedrag"}{contribution.net_amount}{/capture}
+{capture assign="direct_betaald"}{contribution.paid_amount}{/capture}
+{capture assign="direct_balans"}{contribution.balance_amount}{/capture}
+
+{/if}
+
+{capture assign="part_bedrag"}{participant.custom_1660}{/capture}
+{capture assign="part_betaald"}{participant.custom_1586}{/capture}
+{capture assign="part_balans"}{participant.custom_1587}{/capture}
+
+{capture assign="jaar_bedrag"}{contact.custom_1657}{/capture}	
+{capture assign="jaar_betaald"}{contact.custom_1658}{/capture}
+{capture assign="jaar_balans"}{contact.custom_1659}{/capture}
+
+{if $direct_bedrag}
+{capture assign="user_bedrag"}{$direct_bedrag}{/capture}
+{elseif $part_bedrag}
+{capture assign="user_bedrag"}{$part_bedrag}{/capture}
+{elseif $jaar_bedrag}
+{capture assign="user_bedrag"}{$jaar_bedrag}{/capture}
+{/if}
+
+{if $direct_betaald}
+{capture assign="user_betaald"}{$direct_betaald}{/capture}
+{elseif $part_betaald}
+{capture assign="user_betaald"}{$part_betaald}{/capture}
+{elseif $jaar_betaald}
+{capture assign="user_betaald"}{$jaar_betaald}{/capture}
+{/if}
+
+{if $direct_balans}
+{capture assign="user_balans"}{$direct_balans}{/capture}
+{elseif $part_balans}
+{capture assign="user_balans"}{$part_balans}{/capture}
+{elseif $jaar_balans}
+{capture assign="user_balans"}{$jaar_balans}{/capture}
+{/if}
+
+{if $part_bid AND $part_bid gt 0}
+{capture assign="participant_balance"}{participant.balance}{/capture}
+{capture assign="partfeeamount"}{participant.fee_amount}{/capture}
+{capture assign="dummyfee"}{participant.custom_1631}{/capture}
+{capture assign="regdatum"}{participant.register_date}{/capture}
+{capture assign="partstatus"}{participant.status_id:name}{/capture}
+{capture assign="partroleid"}{participant.role_id:name}{/capture}
+{capture assign="partpaylater"}{participant.is_pay_later}{/capture}
+{/if}
+
+{assign var="geldactie" 	 		value="overzicht"}
+{assign var="geldtodo" 		 		value="Het kampgeld"}
+{capture assign="geldtodolang"}Het kampgeld {if $user_kampkort}voor {$user_kampkort}{/if}{/capture}
+
+{if $user_betaald eq $user_bedrag AND $user_bedrag neq $user_balans}
+{assign var="kampgeldstatus" 		value="betaald"}
+{assign var="kampgeldstatuslang" 	value="is volledig betaald"}
+{assign var="kampgeld" 		 		value="betaalde kampgeld"}
+{assign var="kampgeldimg" 	 		value="check.png"}
+{assign var="resterendbedrag"  		value="nee"}
+{assign var="geldactie" 	 		value="betaald"}
+{assign var="geldtodo" 		 		value="Het kampgeld is voldaan"}
+{capture assign="geldtodolang"}Het {$kampgeld} ({$user_bedrag|crmMoney}) {$kampgeldstatuslang}{/capture}
+{/if} 
+
+{if $user_balans eq $user_bedrag AND $user_bedrag neq $user_betaald}
+{assign var="kampgeldstatus"  		value="nietbetaald"}
+{assign var="kampgeldstatuslang" 	value="is nog niet betaald"}
+{assign var="kampgeld" 		 		value="openstaande kampgeld"}
+{assign var="kampgeldimg"  			value="ideal.png"}
+{assign var="resterendbedrag"  		value="ja"}
+{capture assign="resterend"}is {$user_balans|crmMoney}{/capture}
+{capture assign="geldactie"}{$user_balans|crmMoney}{/capture}
+{capture assign="geldtodo"}Het {$kampgeld} {if $user_kampkort}{/if}{/capture}
+    {capture assign="geldtodolang"}{$geldtodo} {$resterend}{/capture}
+{/if}
+
+{if $user_betaald lt $user_bedrag AND $user_balans neq $user_betaald AND $user_balans neq $user_bedrag}
+{assign var="kampgeldstatus"  		value="gedeeltelijk"}
+{assign var="kampgeldstatuslang" 	value="is gedeeltelijk betaald"}
+{assign var="kampgeld" 		 		value="resterende kampgeld"}
+{assign var="kampgeldimg" 	 		value="ideal.png"}
+{assign var="resterendbedrag"  		value="ja"}
+{capture assign="resterend"}is {$user_balans|crmMoney}{/capture}
+{capture assign="geldactie"}{$user_balans|crmMoney}{/capture}
+{capture assign="geldtodo"}Het {$kampgeld} {if $user_kampkort}{/if}{/capture}
+    {capture assign="geldtodolang"}{$geldtodo} {$resterend}{/capture}
+{/if}
+
+{if $user_regeling eq 'ja_stgave' OR $user_regeling eq 'Ja, via St.Gave'}
+{assign var="kampgeldstatus" 		value="betaald"}
+{assign var="kampgeldstatuslang" 	value="gaat via Stichting Gave"}
+{assign var="kampgeld" 		 		value="betaalde kampgeld"}
+{assign var="kampgeldimg" 	 		value="check.png"}
+{assign var="resterendbedrag"  		value="nee"}
+{assign var="geldactie" 	 		value="betaald"}
+{assign var="geldtodo" 		 		value="Kampgeld via St.Gave"}
+{capture assign="geldtodolang"}Het kampgeld gaat via St.Gave{/capture}
+{/if} 
+
+{if $user_regeling eq 'ja_stgave' OR $user_regeling eq 'Ja, via St.Gave'}
+{assign  var="stgave" 		 		value="ja"}
+{capture assign="zelfedit_short"}form/stgave/aanpassen?cid1={$user_cid}&c1event1={$user_eid}&{contact.checksum}{/capture}
+{capture assign="zelfedit_short_gave_oud1"}form/stgave/aanpassen?cid1={$user_cid}&c1event1={$user_eid}&{contact.checksum}{/capture}
+{capture assign="zelfedit_short_gave_cont"}form/stgave/updaten?cid3={$user_cid}&c3event1={$user_eid}&{contact.checksum}{/capture}
+{/if}
+
+{capture assign="adminzoom"}{$ozkweburl}/{$adminzoom_short}{/capture}
+{capture assign="adminedit"}{$ozkweburl}/{$adminedit_short}{/capture}
+{capture assign="zelfedit"}{$ozkweburl}/{$zelfedit_short}{/capture}
+{capture assign="zelfedit_gave_oud1"}{$ozkweburl}/{$zelfedit_short_gave_oud1}{/capture}
+{capture assign="zelfedit_gave_cont"}{$ozkweburl}/{$zelfedit_short_gave_cont}{/capture}
+{capture assign="zelfeditbio"}{$ozkweburl}/{$zelfeditbio_short}{/capture}
+
+{capture assign="paymentdash_short"}civicrm/user?reset=1&id={$user_cid}&{contact.checksum}{/capture}
+{capture assign="paymentlink_short"}civicrm/user?reset=1&id={$user_cid}&{contact.checksum}{/capture}
+
+{if $user_bid gt 0 AND $resterendbedrag eq "ja"}
+{capture assign="paymentlink_short"}civicrm/contribute/transact?reset=1&id=7&ccid={$user_bid}&cid={$user_cid}&{contact.checksum}{/capture}	
+{else}
+{capture assign="paymentlink_short"}civicrm/user?reset=1&id={$user_cid}&{contact.checksum}{/capture}
+{/if}
+
+{capture assign="paymentdash"}{$ozkweburl}/{$paymentdash_short}{/capture}
+{capture assign="paymentlink"}{$ozkweburl}/{$paymentlink_short}{/capture}
+
+{capture assign="declaratiecategorie"}{contribution.custom_575:name}{/capture}
+{capture assign="evaluatiedatum"}{participant.custom_1076}{/capture}
+
+{capture assign="onetimelogin"}{d7onetime.url}{/capture}
+{if $onetimelogin}
+{capture assign="loginlink"}{$onetimelogin}{/capture}
+{capture assign="logininfo"}(eenmalige loginlink. inlognaam: {contact.job_title}){/capture}
+{else}
+{capture assign="loginlink"}{$ozkaccount}{/capture}
+{capture assign="logininfo"}({$aanspreek_uwjouw} inlognaam is: {contact.job_title}){/capture}
+{/if}
+
+{if ($user_kampkort eq "top" OR $user_kampkort eq "TOP") AND $user_kamprol eq "deelnemer"}
+{capture assign="loginrequest_short"}form/topkamp/inloglink?cid1={$user_cid}&{contact.checksum}{/capture}
+{capture assign="loginrequest"}{$ozkweburl}/{$loginrequest_short}{/capture}
+{elseif $user_kamprol eq "deelnemer"}
+{capture assign="loginrequest_short"}form/inloglink?cid1={$user_cid}&{contact.checksum}{/capture}
+{capture assign="loginrequest"}{$ozkweburl}/{$loginrequest_short}{/capture}
+{elseif $user_kamprol eq "leiding"}
+{capture assign="loginrequest_short"}form/inloglink?cid1={$user_cid}&{contact.checksum}{/capture}
+{capture assign="loginrequest"}{$ozkweburl}/{$loginrequest_short}{/capture}
+{else}
+{capture assign="loginrequest_short"}form/inloglink?cid1={$user_cid}&{contact.checksum}{/capture}
+{capture assign="loginrequest"}{$ozkweburl}/{$loginrequest_short}{/capture}
+{/if}
+
+{assign var="M61HEAD" value="EINDE"}
