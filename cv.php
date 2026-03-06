@@ -9,7 +9,7 @@ require_once 'cv.civix.php';
 function cv_civicrm_customPre($op, $groupID, $entityID, &$params) {
 
 	// 1. Configuratie en Variabelen
-    $extdebug       = 2;
+    $extdebug       = 0;
     $profilecontcv  = array(103);
     
     // Statische variabele als slot (voorkomt infinite loops in hooks)
@@ -86,7 +86,7 @@ function cv_civicrm_configure($contactid, $array_contact = NULL, $ditjaar_array 
 
 	$ditjaar_array 		= $ditjaar_array ?? []; 
 
-	$extdebug   		= 3; // Debug op 3 voor uitgebreide Watchdog logging
+	$extdebug   		= 0; // Debug op 3 voor uitgebreide Watchdog logging
 	$apidebug   		= FALSE;
 
 	// Als de contact array leeg is, halen we deze zelf op
