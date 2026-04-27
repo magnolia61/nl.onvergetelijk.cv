@@ -1,16 +1,18 @@
 <?php
 
-// === FUNCTIE-INDEX ===
-// Bestand: cv.php
-// Functies in dit bestand:
-//   cv_get_field_map()      De centrale mapping voor alle CV-gerelateerde custom fields binnen
-//   cv_civicrm_customPre()  De "Portier" voor de CV-module. Deze hook controleert of de inkomende
-//   cv_civicrm_configure()  De "Rekenmachine" voor CV. Consolideert handmatige vinkjes uit het
-//   cv_civicrm_install()
-//   cv_civicrm_uninstall()
-//   cv_civicrm_enable()
-//   cv_civicrm_disable()
-// === EINDE FUNCTIE-INDEX ===
+/**
+ * =======================================================================================
+ * FUNCTIE-INDEX: cv.php
+ * =======================================================================================
+ *   cv_get_field_map()      De centrale mapping voor alle CV-gerelateerde custom fields binnen
+ *   cv_civicrm_customPre()  De "Portier" voor de CV-module. Deze hook controleert of de inkomende
+ *   cv_civicrm_configure()  De "Rekenmachine" voor CV. Consolideert handmatige vinkjes uit het
+ *   cv_civicrm_install()
+ *   cv_civicrm_uninstall()
+ *   cv_civicrm_enable()
+ *   cv_civicrm_disable()
+ * =======================================================================================
+ */
 
 require_once 'cv.civix.php';
 
