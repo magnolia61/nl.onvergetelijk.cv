@@ -74,7 +74,7 @@ function cv_civicrm_customPre($op, $groupID, $entityID, &$params) {
 		return;
 	}
 
-	$extdebug      = 0;
+	$extdebug = 'cv.custompre'; // Kanaal voor centrale debug-config; niveau wordt opgezocht in ozk.debug.config.php
 	$profilecontcv = [103]; // CV Beheer profiel ID
 
 	if (!in_array($groupID, $profilecontcv)) {
@@ -118,7 +118,7 @@ function cv_civicrm_customPre($op, $groupID, $entityID, &$params) {
 
 	// --- STAP 3.0: RESULTATEN TERUGSTOPPEN IN HET FORMULIER ---
 	if (!empty($data_cv)) {
-		$success_list = base_inject_params($params, $data_cv, $field_ids, $entityID, "CV_HOOK");
+		$success_list = base_inject_params($params, $data_cv, $field_ids, $entityID, "CV_HOOK", $extdebug);
 		
 		if (!empty($success_list)) {
 			wachthond($extdebug, 1, "CV [PRE] SUCCES: Injectie voltooid", $success_list);
@@ -153,7 +153,7 @@ function cv_civicrm_configure($contactid, $array_contact = NULL, $ditjaar_array 
 		return;
 	}
 
-	$extdebug                = 0; 
+	$extdebug = 'cv.configure'; // Kanaal voor centrale debug-config; niveau wordt opgezocht in ozk.debug.config.php
 	$apidebug                = FALSE;
 
 	$processing_cv_configure = TRUE;
@@ -402,7 +402,7 @@ function cv_civicrm_configure($contactid, $array_contact = NULL, $ditjaar_array 
 	if ($context === 'direct' && !empty($data_cv)) {
 		
 		wachthond($extdebug, 1, "### UPDATE STRATEGIE: API CALL",        "[FLOW]");
-		$res_cv = base_api_wrapper('Contact', $contact_id, $data_cv, "CV_API");
+		$res_cv = base_api_wrapper('Contact', $contact_id, $data_cv, "CV_API", $extdebug);
 
 		if ($res_cv === false) {
 			wachthond($extdebug, 1, "API-WRAPPER CV update gefaald",      "ERROR");
